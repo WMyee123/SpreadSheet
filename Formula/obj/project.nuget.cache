@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "bGrFCE+QjTk=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\myers\\Downloads\\ps1\\Formula\\Formula.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\myers\\.nuget\\packages\\stylecop.analyzers\\1.1.118\\stylecop.analyzers.1.1.118.nupkg.sha512"
+  ],
+  "logs": []
+}

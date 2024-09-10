@@ -96,9 +96,15 @@ public class Formula
         fullForm = string.Empty;
         foreach(string currToken in tokens)
         {
-            fullForm += currToken.ToUpper() + " ";
+            if(float.TryParse(currToken, out float r))
+            {
+                fullForm += float.Parse(currToken);
+            }
+            else
+            {
+                fullForm += currToken.ToUpper();
+            }
         }
-        fullForm = fullForm.TrimEnd();
 
         // Throw an exception if the formula is empty
         if(tokens.Count == 0)
@@ -106,10 +112,12 @@ public class Formula
             throw new FormulaFormatException("Empty Formulas Not Valid");
         }
 
+        string normToken;
+
         // Count the tokens, checking for validity, if the token is not valid an exception is thrown
-        foreach(string token in tokens)
+        foreach (string token in tokens)
         {
-            string normToken = token.ToUpper();
+            normToken = token.ToUpper();
 
             // Count the numbers of opening and closing parenthesis, comparing the counts to ensure balance
             if (normToken == "(")
@@ -122,12 +130,25 @@ public class Formula
             }
 
             // Check for token validity throwing an exception if the token is not
-            if(prevToken != null & !TokenRulesValid(normToken, prevToken))
+            if (prevToken != null & !TokenRulesValid(normToken, prevToken))
             {
                 throw new FormulaFormatException("Token not valid");
             }
+            else if ((normToken == "+" || normToken == "-" || normToken == "*" || normToken == "/") && prevToken == null)
+            {
+                throw new FormulaFormatException("Token not Valid");
+            }
+            else if(!GetVariables().Contains(normToken) && !float.TryParse(normToken, out float r) && !(normToken == "+" || normToken == "-" || normToken == "*" || normToken == "/" || normToken == "(" || normToken == ")"))
+            {
+                throw new FormulaFormatException("Token not Valid");
+            }
 
             prevToken = normToken; // Reset the previous token to the current one such that the validity can be properly checked
+        }
+
+        if((prevToken == "+" || prevToken == "-" || prevToken == "*" || prevToken == "/"))
+        {
+            throw new FormulaFormatException("Formula Cannot End on Operator");
         }
 
         // Throw an exception if the opening and closing parenthesis counts are not equal
@@ -303,7 +324,7 @@ public class Formula
         else if(prevToken == "+" || prevToken == "-" || prevToken == "/"|| prevToken == "*")
         {
             // Return true if a variable or integer follows an operator
-            if (GetVariables().Contains(token) || int.TryParse(token, out int i))
+            if (GetVariables().Contains(token) || float.TryParse(token, out float i))
             {
                 return true;
             }
@@ -317,7 +338,7 @@ public class Formula
         else if(prevToken == "(")
         {
             // Return true if a variable or integer follows an opening parenthesis
-            if (GetVariables().Contains(token) || int.TryParse(token, out int i))
+            if (GetVariables().Contains(token) || float.TryParse(token, out float i))
             {
                 return true;
             }
@@ -342,7 +363,7 @@ public class Formula
             }
         }
         // Check the consitions for if the previous token was an integer
-        else if (int.TryParse(prevToken, out int i))
+        else if (float.TryParse(prevToken, out float i))
         {
             // Return true if an operator follows an integer
             if (token == "+" || token == "-" || token == "/" || token == "*")

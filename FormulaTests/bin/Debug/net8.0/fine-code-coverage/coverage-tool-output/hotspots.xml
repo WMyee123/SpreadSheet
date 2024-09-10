@@ -5,13 +5,28 @@
     <Class>CS3500.Formula.Formula</Class>
     <MethodName>TokenRulesValid(...)</MethodName>
     <ShortName />
-    <Line>273</Line>
+    <Line>308</Line>
     <FileIndex>0</FileIndex>
     <Metrics>
       <Metric>
         <Name>Cyclomatic complexity</Name>
         <Exceeded>true</Exceeded>
         <Value>60</Value>
+      </Metric>
+    </Metrics>
+  </Hotspot>
+  <Hotspot>
+    <Assembly>Formula</Assembly>
+    <Class>CS3500.Formula.Formula</Class>
+    <MethodName>.ctor(...)</MethodName>
+    <ShortName />
+    <Line>89</Line>
+    <FileIndex>0</FileIndex>
+    <Metrics>
+      <Metric>
+        <Name>Cyclomatic complexity</Name>
+        <Exceeded>true</Exceeded>
+        <Value>50</Value>
       </Metric>
     </Metrics>
   </Hotspot>

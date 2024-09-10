@@ -196,7 +196,7 @@ public class FormulaSyntaxTests
     ///     <code>
     ///         Code Within Test
     ///         _ = new Formula("(5)")
-    ///         _ = new Formula("x")
+    ///         _ = new Formula("x1")
     ///         _ = new Formula("5")
     ///     </code>
     /// </summary>
@@ -204,7 +204,7 @@ public class FormulaSyntaxTests
     public void FormulaConstructor_TestFirstToken_Valid()
     {
         _ = new Formula("(5)");
-        _ = new Formula("x");
+        _ = new Formula("x1");
         _ = new Formula("5");
     }
 
@@ -252,7 +252,7 @@ public class FormulaSyntaxTests
     ///         Code Within Test:
     ///         _ = new Formula("(5)");
     ///         _ = new Formula("3");
-    ///         _ = new Formula("x");
+    ///         _ = new Formula("x1");
     ///     </code>
     /// </summary>
     [TestMethod]
@@ -260,7 +260,7 @@ public class FormulaSyntaxTests
     {
         _ = new Formula("(5)");
         _ = new Formula("3");
-        _ = new Formula("x");
+        _ = new Formula("x1");
     }
 
 
@@ -357,14 +357,14 @@ public class FormulaSyntaxTests
     ///     </para>
     ///     <code>
     ///         Code Within Test:
-    ///          Assert.IsTrue(new Formula("x1 + z1").ToString() == "X1 + Z1");
-    ///         Assert.IsTrue(new Formula("x1  +     z1").ToString() == "X1 + Z1");
+    ///          Assert.IsTrue(new Formula("x1 + z1").ToString() == "X1+Z1");
+    ///         Assert.IsTrue(new Formula("x1  +     z1").ToString() == "X1+Z1");
     ///     </code>
     /// </summary>
     [TestMethod]
     public void Formula_TestToString_Valid()
     {
-        Assert.IsTrue(new Formula("x1 + z1").ToString() == "X1 + Z1");
-        Assert.IsTrue(new Formula("x1  +     z1").ToString() == "X1 + Z1"); // This test ensures that extra spaces are not represented in the ToString Function
+        Assert.IsTrue(new Formula("x1 + z1").ToString() == "X1+Z1");
+        Assert.IsTrue(new Formula("x1  +     z1").ToString() == "X1+Z1"); // This test ensures that extra spaces are not represented in the ToString Function
     }
 }

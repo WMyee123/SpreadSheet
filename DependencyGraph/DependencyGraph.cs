@@ -52,6 +52,7 @@ namespace CS3500.DependencyGraph;
 /// </summary>
 public class DependencyGraph
 {
+    List<DependencyNode> connectionNodes;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DependencyGraph"/> class.
@@ -59,6 +60,7 @@ public class DependencyGraph
     /// </summary>
     public DependencyGraph()
     {
+        connectionNodes = new List<DependencyNode> (); // Initialize the list of nodes present in the graph
     }
 
     /// <summary>
@@ -66,7 +68,7 @@ public class DependencyGraph
     /// </summary>
     public int Size
     {
-        get { return 0; }
+        get { return connectionNodes.Count; }
     }
 
     /// <summary>
@@ -76,6 +78,15 @@ public class DependencyGraph
     /// <returns> true if the node has dependents. </returns>
     public bool HasDependents(string nodeName)
     {
+        // Get the node present within the graph
+        DependencyNode currNode = GetNode(nodeName);
+
+        // Esnure it is not null and return if it has dependents
+        if (currNode != null)
+        {
+            return currNode.GetDependents().Count > 0;
+        }
+
         return false;
     }
     /// <summary>
@@ -85,6 +96,15 @@ public class DependencyGraph
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName)
     {
+        // Get the node present within the graph
+        DependencyNode currNode = GetNode(nodeName);
+
+        // Esnure it is not null and return if it has dependees
+        if (currNode != null)
+        {
+            return currNode.GetDependees().Count > 0;
+        }
+
         return false;
     }
     /// <summary>
@@ -96,7 +116,16 @@ public class DependencyGraph
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName)
     {
-        return new List<string>(); // Choose your own data structure
+        // Get the node present within the graph
+        DependencyNode currNode = GetNode(nodeName);
+
+        // Ensuring the node is present, return a list of each dependent for this node
+        if (currNode != null)
+        {
+            return currNode.GetDependents();
+        }
+
+        return new List<string> ();
     }
     /// <summary>
     ///     <para>
@@ -107,7 +136,16 @@ public class DependencyGraph
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName)
     {
-        return new List<string>(); // Choose your own data structure
+        // Get the node present within the graph
+        DependencyNode currNode = GetNode(nodeName);
+
+        // Ensuring the node is present, return a list of each dependee for this node
+        if (currNode != null)
+        {
+            return currNode.GetDependees();
+        }
+
+        return new List<string> ();
     }
     /// <summary>
     ///     <para>
@@ -121,6 +159,23 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until after the other node has been. </param>
     public void AddDependency(string dependee, string dependent)
     {
+        // Determine if either node is present within the graph, adding them to it if not
+        DependencyNode dependeeNode = GetNode(dependee);
+        DependencyNode dependentNode = GetNode(dependee);
+        if (dependeeNode != null && !connectionNodes.Contains(dependeeNode))
+        {
+            connectionNodes.Add(new DependencyNode(dependee));
+        }
+        if (dependentNode != null && !connectionNodes.Contains(dependentNode))
+        {
+            connectionNodes.Add(new DependencyNode(dependent));
+        }
+
+        // Re-find the nodes within the graph, adding the dependents and dependees to either one in this process
+        dependeeNode = GetNode(dependee);
+        dependentNode = GetNode(dependee);
+
+        
     }
     /// <summary>
     ///     <para>
@@ -131,6 +186,14 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until the other node has been. </param>
     public void RemoveDependency(string dependee, string dependent)
     {
+        // Determine if both nodes are present within the graph, removing the dependency if so
+        DependencyNode dependeeNode = GetNode(dependee);
+        DependencyNode dependentNode = GetNode(dependee);
+        if (dependeeNode != null && dependentNode != null)
+        {
+            dependeeNode.dependents.Remove(dependentNode);
+            dependentNode.dependees.Remove(dependeeNode);
+        }
     }
     /// <summary>
     ///     Removes all existing ordered pairs of the form (nodeName, *). Then, for each t in newDependents, adds the ordered pair (nodeName, t).
@@ -149,5 +212,60 @@ public class DependencyGraph
     /// <param name="newDependees"> The new dependees for nodeName. Could be empty.</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
     {
+    }
+
+
+    private DependencyNode GetNode(string nodeName)
+    {
+        foreach (DependencyNode node in connectionNodes)
+        {
+            if (node.nodeName == nodeName)
+            {
+                return node;
+            }
+        }
+
+        return null;
+    }
+
+
+    internal class DependencyNode
+    {
+        public string nodeName;
+        public List<DependencyNode> dependents;
+        public List<DependencyNode> dependees;
+
+        public DependencyNode(string nodeName)
+        {
+            this.nodeName = nodeName;
+            dependees = new List<DependencyNode>();
+            dependents = new List<DependencyNode>();
+        }
+
+
+        public List<string> GetDependees()
+        {
+            List<string> dependeeNames = new List<string>();
+
+            foreach(DependencyNode node in dependees)
+            {
+                dependeeNames.Add(node.nodeName);
+            }
+
+            return dependeeNames;
+        }
+
+
+        public List<string> GetDependents()
+        {
+            List<string> dependentNames = new List<string>();
+
+            foreach (DependencyNode node in dependents)
+            {
+                dependentNames.Add(node.nodeName);
+            }
+
+            return dependentNames;
+        }
     }
 }

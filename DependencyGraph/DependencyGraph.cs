@@ -147,8 +147,7 @@ public class DependencyGraph
     /// </summary>
     /// <param name="nodeName"> The name of the node who's dependees are being replaced. </param>
     /// <param name="newDependees"> The new dependees for nodeName. Could be empty.</param>
-    public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees
-    )
+    public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
     {
     }
 }

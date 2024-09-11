@@ -1,0 +1,12 @@
+C:\Users\myers\Downloads\ps1\DependencyGraph\bin\Debug\net8.0\DependencyGraph.deps.json
+C:\Users\myers\Downloads\ps1\DependencyGraph\bin\Debug\net8.0\DependencyGraph.dll
+C:\Users\myers\Downloads\ps1\DependencyGraph\bin\Debug\net8.0\DependencyGraph.pdb
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.AssemblyInfoInputs.cache
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.AssemblyInfo.cs
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.csproj.CoreCompileInputs.cache
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.sourcelink.json
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.dll
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\refint\DependencyGraph.dll
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.pdb
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\ref\DependencyGraph.dll

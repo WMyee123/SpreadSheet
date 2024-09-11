@@ -1,8 +1,8 @@
 // <copyright file="FormulaSyntaxTests.cs" company="UofU-CS3500">
 //   Copyright © 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <authors> [Insert Your Name] </authors>
-// <date> [Insert the Date] </date>
+// <authors> William Myers </authors>
+// <date> 9/10/2024 </date>
 
 namespace CS3500.FormulaTests;
 

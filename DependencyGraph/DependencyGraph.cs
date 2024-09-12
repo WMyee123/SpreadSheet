@@ -159,23 +159,34 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until after the other node has been. </param>
     public void AddDependency(string dependee, string dependent)
     {
+        // Do nothing if the dependee and dependent are the same
+        if(dependee == dependent)
+        {
+            return;
+        }
+
         // Determine if either node is present within the graph, adding them to it if not
         DependencyNode dependeeNode = GetNode(dependee);
-        DependencyNode dependentNode = GetNode(dependee);
-        if (dependeeNode != null && !connectionNodes.Contains(dependeeNode))
+        DependencyNode dependentNode = GetNode(dependent);
+        if (dependeeNode == null)
         {
-            connectionNodes.Add(new DependencyNode(dependee));
+            dependeeNode = new DependencyNode(dependee);
+            connectionNodes.Add(dependeeNode);
         }
-        if (dependentNode != null && !connectionNodes.Contains(dependentNode))
+        if (dependentNode == null)
         {
-            connectionNodes.Add(new DependencyNode(dependent));
+            dependentNode = new DependencyNode(dependent);
+            connectionNodes.Add(dependentNode);
         }
 
-        // Re-find the nodes within the graph, adding the dependents and dependees to either one in this process
-        dependeeNode = GetNode(dependee);
-        dependentNode = GetNode(dependee);
+        if (dependeeNode.dependents.Contains(dependent))
+        {
+            return;
+        }
 
-        
+        // add the dependents and dependees to either one in this process
+        dependeeNode.dependents.Add(dependent);
+        dependentNode.dependees.Add(dependee);
     }
     /// <summary>
     ///     <para>
@@ -188,11 +199,11 @@ public class DependencyGraph
     {
         // Determine if both nodes are present within the graph, removing the dependency if so
         DependencyNode dependeeNode = GetNode(dependee);
-        DependencyNode dependentNode = GetNode(dependee);
+        DependencyNode dependentNode = GetNode(dependent);
         if (dependeeNode != null && dependentNode != null)
         {
-            dependeeNode.dependents.Remove(dependentNode);
-            dependentNode.dependees.Remove(dependeeNode);
+            dependeeNode.dependents.Remove(dependent);
+            dependentNode.dependees.Remove(dependee);
         }
     }
     /// <summary>
@@ -202,6 +213,9 @@ public class DependencyGraph
     /// <param name="newDependents"> The new dependents for nodeName. </param>
     public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents)
     {
+        DependencyNode node = GetNode(nodeName);
+
+        node.dependents = newDependents.ToList();
     }
     /// <summary>
     ///     <para>
@@ -212,9 +226,22 @@ public class DependencyGraph
     /// <param name="newDependees"> The new dependees for nodeName. Could be empty.</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
     {
+        DependencyNode node = GetNode(nodeName);
+
+        node.dependees = newDependees.ToList();
     }
 
 
+    /// <summary>
+    ///     <para>
+    ///         A private helper method to find nodes already present within the graph, returning a null value if it does not exist
+    ///          - This is done by scanning through all nodes within the graph to find the intended one
+    ///     </para>
+    /// </summary>
+    /// <param name="nodeName"></param>
+    /// <returns>
+    ///     A node corresponding to the value passed into it
+    /// </returns>
     private DependencyNode GetNode(string nodeName)
     {
         foreach (DependencyNode node in connectionNodes)
@@ -229,43 +256,64 @@ public class DependencyGraph
     }
 
 
+    /// <summary>
+    ///     <para>
+    ///         A private, internal class to define nodes and their dependents and dependees
+    ///     </para>
+    ///     <list type="bullet">
+    ///         <item>
+    ///             nodeName - The value that is stored for other dependents and dependees to reference
+    ///         </item>
+    ///         <item>
+    ///             dependents - The dependents corresponding to this value
+    ///         </item>
+    ///         <item>
+    ///             dependees - The dependees corresponding to this value
+    ///         </item>
+    ///     </list>
+    /// </summary>
     internal class DependencyNode
     {
         public string nodeName;
-        public List<DependencyNode> dependents;
-        public List<DependencyNode> dependees;
+        public List<string> dependents;
+        public List<string> dependees;
 
+
+        /// <summary>
+        ///     A constructor to create a new node for storing of dependents and dependees within the graph
+        /// </summary>
+        /// <param name="nodeName">
+        ///     The value held within the node, being used for reference within other nodes, connecting the graph
+        /// </param>
         public DependencyNode(string nodeName)
         {
             this.nodeName = nodeName;
-            dependees = new List<DependencyNode>();
-            dependents = new List<DependencyNode>();
+            dependees = new List<string>();
+            dependents = new List<string>();
         }
 
 
+        /// <summary>
+        ///     Get the dependees for a specific value
+        /// </summary>
+        /// <returns>
+        ///     A list of all node values that are correlated as a dependee to this current value
+        /// </returns>
         public List<string> GetDependees()
         {
-            List<string> dependeeNames = new List<string>();
-
-            foreach(DependencyNode node in dependees)
-            {
-                dependeeNames.Add(node.nodeName);
-            }
-
-            return dependeeNames;
+            return dependees;
         }
 
 
+        /// <summary>
+        ///     Get the dependents of this specific value
+        /// </summary>
+        /// <returns>
+        ///     A list of all node values that are correlated as a dependent with this current value
+        /// </returns>
         public List<string> GetDependents()
         {
-            List<string> dependentNames = new List<string>();
-
-            foreach (DependencyNode node in dependents)
-            {
-                dependentNames.Add(node.nodeName);
-            }
-
-            return dependentNames;
+            return dependents;
         }
     }
 }

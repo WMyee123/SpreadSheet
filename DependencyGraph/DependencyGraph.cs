@@ -214,8 +214,17 @@ public class DependencyGraph
     public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents)
     {
         DependencyNode node = GetNode(nodeName);
+        List<string> tempDependents = new List<string>();
 
-        node.dependents = newDependents.ToList();
+        foreach (string dependent in newDependents)
+        {
+            if (dependent != node.nodeName)
+            {
+                tempDependents.Add(dependent);
+            }
+        }
+
+        node.dependents = tempDependents;
     }
     /// <summary>
     ///     <para>
@@ -227,8 +236,17 @@ public class DependencyGraph
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
     {
         DependencyNode node = GetNode(nodeName);
+        List<string> tempDependees = new List<string>();
 
-        node.dependees = newDependees.ToList();
+        foreach (string dependee in newDependees)
+        {
+            if (dependee != node.nodeName)
+            {
+                tempDependees.Add(dependee);
+            }
+        }
+
+        node.dependees = tempDependees;
     }
 
 

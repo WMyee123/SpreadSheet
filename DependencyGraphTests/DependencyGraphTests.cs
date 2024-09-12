@@ -73,7 +73,7 @@ public class DependencyGraphTests
         List<string> visited = new List<string>();
 
         // Esnure that only 2 values are connected to "A"
-        for(int i = 0;i < dependents.Length; i++)
+        for (int i = 0; i < dependents.Length; i++)
         {
             Assert.IsTrue(!visited.Contains(dependents[i]));
             visited.Add(dependents[i]);
@@ -330,5 +330,90 @@ public class DependencyGraphTests
         testGraph.RemoveDependency("A", "B");
 
         Assert.IsTrue(testGraph.GetDependees("B").Count() == 0);
+    }
+
+
+    [TestMethod]
+    public void DependencyGraph_ReplaceDependeesTest()
+    {
+        DependencyGraph testGraph = new DependencyGraph();
+
+        testGraph.AddDependency("A", "B");
+        testGraph.AddDependency("C", "B");
+        testGraph.RemoveDependency("B", "E");
+        testGraph.AddDependency("R", "B");
+
+        List<string> newDependees = new List<string>();
+
+        newDependees.Add("7");
+
+        testGraph.ReplaceDependees("A", newDependees);
+
+
+        Assert.IsTrue(testGraph.GetDependees("A").Count() == 1);
+    }
+
+
+    [TestMethod]
+    public void DependencyGraph_ReplaceDependeesTest_SameNode()
+    {
+        DependencyGraph testGraph = new DependencyGraph();
+
+        testGraph.AddDependency("A", "B");
+        testGraph.AddDependency("C", "B");
+        testGraph.RemoveDependency("B", "E");
+        testGraph.AddDependency("R", "B");
+
+        List<string> newDependees = new List<string>();
+
+        newDependees.Add("A");
+
+        testGraph.ReplaceDependees("A", newDependees);
+
+
+        Assert.IsTrue(testGraph.GetDependees("A").Count() == 0);
+    }
+
+
+
+    [TestMethod]
+    public void DependencyGraph_ReplaceDependentsTest()
+    {
+        DependencyGraph testGraph = new DependencyGraph();
+
+        testGraph.AddDependency("A", "B");
+        testGraph.AddDependency("C", "B");
+        testGraph.RemoveDependency("B", "E");
+        testGraph.AddDependency("R", "B");
+
+        List<string> newDependents = new List<string>();
+
+        newDependents.Add("7");
+
+        testGraph.ReplaceDependents("A", newDependents);
+
+
+        Assert.IsTrue(testGraph.GetDependents("A").Count() == 1);
+    }
+
+
+    [TestMethod]
+    public void DependencyGraph_ReplaceDependentsTest_SameNode()
+    {
+        DependencyGraph testGraph = new DependencyGraph();
+
+        testGraph.AddDependency("A", "B");
+        testGraph.AddDependency("C", "B");
+        testGraph.RemoveDependency("B", "E");
+        testGraph.AddDependency("R", "B");
+
+        List<string> newDependents = new List<string>();
+
+        newDependents.Add("A");
+
+        testGraph.ReplaceDependents("A", newDependents);
+
+
+        Assert.IsTrue(testGraph.GetDependents("A").Count() == 0);
     }
 }

@@ -52,7 +52,7 @@ namespace CS3500.DependencyGraph;
 /// </summary>
 public class DependencyGraph
 {
-    List<DependencyNode> connectionNodes;
+    private List<DependencyNode> connectionNodes; // The nodes containing values, allowing for reading and manipulation of the DependencyGraph
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DependencyGraph"/> class.
@@ -63,6 +63,7 @@ public class DependencyGraph
         connectionNodes = new List<DependencyNode> (); // Initialize the list of nodes present in the graph
     }
 
+
     /// <summary>
     ///     The number of ordered pairs in the DependencyGraph.
     /// </summary>
@@ -70,6 +71,7 @@ public class DependencyGraph
     {
         get { return connectionNodes.Count; }
     }
+
 
     /// <summary>
     ///     Reports whether the given node has dependents (i.e., other nodes depend on it).
@@ -89,6 +91,8 @@ public class DependencyGraph
 
         return false;
     }
+
+
     /// <summary>
     ///     Reports whether the given node has dependees (i.e., depends on one or more other nodes).
     /// </summary>
@@ -107,6 +111,8 @@ public class DependencyGraph
 
         return false;
     }
+
+
     /// <summary>
     ///     <para>
     ///         Returns the dependents of the node with the given name.
@@ -127,6 +133,8 @@ public class DependencyGraph
 
         return new List<string> ();
     }
+
+
     /// <summary>
     ///     <para>
     ///         Returns the dependees of the node with the given name.
@@ -147,6 +155,8 @@ public class DependencyGraph
 
         return new List<string> ();
     }
+
+
     /// <summary>
     ///     <para>
     ///         Adds the ordered pair (dependee, dependent), if it doesn't already exist (otherwise nothing happens).
@@ -188,6 +198,8 @@ public class DependencyGraph
         dependeeNode.dependents.Add(dependent);
         dependentNode.dependees.Add(dependee);
     }
+
+
     /// <summary>
     ///     <para>
     ///         Removes the ordered pair (dependee, dependent), if it exists (otherwise nothing happens).
@@ -206,6 +218,8 @@ public class DependencyGraph
             dependentNode.dependees.Remove(dependee);
         }
     }
+
+
     /// <summary>
     ///     Removes all existing ordered pairs of the form (nodeName, *). Then, for each t in newDependents, adds the ordered pair (nodeName, t).
     /// </summary>
@@ -226,6 +240,8 @@ public class DependencyGraph
 
         node.dependents = tempDependents;
     }
+
+
     /// <summary>
     ///     <para>
     ///         Removes all existing ordered pairs of the form (*, nodeName). Then, for each t in newDependees, adds the ordered pair (t, nodeName).

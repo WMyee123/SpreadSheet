@@ -388,6 +388,36 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
+    ///         Ensure that when given doubles or floats, the == syntax can still find proper equality between formulas
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestDoubleEquals_FloatingPoint()
+    {
+        Assert.IsTrue(new Formula("1 + 0.5") == new Formula("1 + 0.5"));
+        Assert.IsFalse(new Formula("1 + 0.5") == new Formula("0.5 + 2")); // Check in the case that the two formulas are slightly different
+        Assert.IsTrue(new Formula("1 + 5E-1") == new Formula("1 + 5E-1"));
+        Assert.IsTrue(new Formula("1 + 0.5") == new Formula("1 + 5E-1")); // Check to ensure that a combination of two forms is read as an equality, rather than inequality
+        Assert.IsFalse(new Formula("1 + 5E-1") == new Formula("1 + 1.5E-1"));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when given parenthesis, a formula can properly be found to be equivalent using the == syntax
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestMethodDoubleEquals_Parenthesis()
+    {
+        Assert.IsTrue(new Formula("(x1 + 5)") == new Formula("(x1 + 5)"));
+        Assert.IsFalse(new Formula("(x1 + 5)") == new Formula("x1 + 5")); // Check in the case that the parenthesis are not present in only 1 formula
+        Assert.IsTrue(new Formula("(5)") == new Formula("(5)")); // Check for when only a signle value is present in the parenthesis
+    }
+
+
+    /// <summary>
+    ///     <para>
     ///         Ensure that when given different variables, the == syntax will return false, or true if they are the same
     ///     </para>
     /// </summary>
@@ -432,6 +462,19 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
+    ///         Ensure that when utilizing negative numbers, equality can properly be found by the Equals function
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestDoubleEquals_NegativeIntegers()
+    {
+        Assert.IsTrue(new Formula("-5 + x1") == new Formula("-5 + x1"));
+        Assert.IsFalse(new Formula("-5 + x1") == new Formula("5 + x1"));
+    }
+
+
+    /// <summary>
+    ///     <para>
     ///         Ensure that when two formulas, using the Equals function, have different integers involved, 
     ///         will be found to be different formulas
     ///     </para>
@@ -441,6 +484,36 @@ public class FormulaSyntaxTests
     {
         Assert.IsTrue(new Formula("1 + 2").Equals(new Formula("1 + 2")));
         Assert.IsFalse(new Formula("1 + 2").Equals(new Formula("1 + 5"))); // Check for in the case the two formulas are not equal
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when given doubles or floats, the Equals function can still find proper equality between formulas
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestEquals_FloatingPoint()
+    {
+        Assert.IsTrue(new Formula("1 + 0.5").Equals(new Formula("1 + 0.5")));
+        Assert.IsFalse(new Formula("1 + 0.5").Equals(new Formula("0.5 + 2"))); // Check in the case that the two formulas are slightly different
+        Assert.IsTrue(new Formula("1 + 5E-1").Equals(new Formula("1 + 5E-1")));
+        Assert.IsTrue(new Formula("1 + 0.5").Equals(new Formula("1 + 5E-1"))); // Check to ensure that a combination of two forms is read as an equality, rather than inequality
+        Assert.IsFalse(new Formula("1 + 5E-1").Equals(new Formula("1 + 1.5E-1")));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when given parenthesis, a formula can properly be found to be equivalent using the Equals function
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestMethodEquals_Parenthesis()
+    {
+        Assert.IsTrue(new Formula("(x1 + 5)").Equals(new Formula("(x1 + 5)")));
+        Assert.IsFalse(new Formula("(x1 + 5)").Equals(new Formula("x1 + 5"))); // Check in the case that the parenthesis are not present in only 1 formula
+        Assert.IsTrue(new Formula("(5)").Equals(new Formula("(5)"))); // Check for when only a signle value is present in the parenthesis
     }
 
 
@@ -492,7 +565,20 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
-    ///         Esnure that when two formulas with different integers are compared, they are found to not be equal
+    ///         Ensure that when utilizing negative numbers, equality can properly be found by the Equals function
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestEquals_NegativeIntegers()
+    {
+        Assert.IsTrue(new Formula("-5 + x1").Equals(new Formula("-5 + x1")));
+        Assert.IsFalse(new Formula("-5 + x1").Equals(new Formula("5 + x1")));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when two formulas with different integers are compared, they are found to not be equal
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -500,6 +586,36 @@ public class FormulaSyntaxTests
     {
         Assert.IsFalse(new Formula("1 + 2") != new Formula("1 + 2"));
         Assert.IsTrue(new Formula("1 + 2") != new Formula("1 + 7")); // Ensure the correct result is sent when a false equality is found
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when given doubles or floats, the != syntax can still find proper inequality between formulas
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestNotEquals_FloatingPoint()
+    {
+        Assert.IsFalse(new Formula("1 + 0.5") != new Formula("1 + 0.5"));
+        Assert.IsTrue(new Formula("1 + 0.5") != new Formula("0.5 + 2")); // Check in the case that the two formulas are slightly different
+        Assert.IsFalse(new Formula("1 + 5E-1") != new Formula("1 + 5E-1"));
+        Assert.IsFalse(new Formula("1 + 0.5") != new Formula("1 + 5E-1")); // Check to ensure that a combination of two forms is read as an equality, rather than inequality
+        Assert.IsTrue(new Formula("1 + 5E-1") != new Formula("1 + 1.5E-1"));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when given parenthesis, a formula can properly be found to be not equivalent using the != syntax
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestMethodNotEquals_Parenthesis()
+    {
+        Assert.IsFalse (new Formula("(x1 + 5)") != new Formula("(x1 + 5)"));
+        Assert.IsTrue(new Formula("(x1 + 5)") != new Formula("x1 + 5")); // Check in the case that the parenthesis are not present in only 1 formula
+        Assert.IsFalse (new Formula("(5)") != new Formula("(5)")); // Check for when only a signle value is present in the parenthesis
     }
 
 
@@ -544,6 +660,19 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("x1 + 2") != new Formula("x1 - 2"));
         Assert.IsTrue(new Formula("1 + x2") != new Formula("x1 + 2"));
         Assert.IsTrue(new Formula("1 + 2") != new Formula("1 * x2"));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when utilizing negative numbers, inequality can properly be found by the != syntax
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestNotEquals_NegativeIntegers()
+    {
+        Assert.IsFalse(new Formula("-5 + x1") != new Formula("-5 + x1"));
+        Assert.IsTrue(new Formula("-5 + x1") != new Formula("5 + x1"));
     }
 
 
@@ -628,6 +757,50 @@ public class FormulaSyntaxTests
         Formula.FormulaError testError = new Formula.FormulaError("Cannot Divide By Zero");
         Formula testFormula = new Formula("x1 / 0");
         Assert.IsTrue(testError.Equals(testFormula.Evaluate(x1 => 5)));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when givne negative values, both as integers and variables, the formula can be properly evaluated
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestEvaluate_NegativeValues()
+    {
+        Formula testFormula = new Formula("-21 + x1");
+        Assert.IsTrue("5".Equals(testFormula.Evaluate(x1 => 26)));
+        Assert.IsTrue("-36".Equals(testFormula.Evaluate(x1 => -15)));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that given a decimal floating point value, a proper evaluation fo the given formula is possible 
+    ///         both when this value is an integer and a variable
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestEvaluate_FloatingPointsDecimal()
+    {
+        Formula testFormula = new Formula("0.67 + x1");
+        Assert.IsTrue("5.67".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.IsTrue("1".Equals(testFormula.Evaluate(x1 => 0.33)));
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that given a, shortened by notation form, floating point value, a proper evaluation fo the given formula is possible 
+    ///         both when this value is an integer and a variable
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestEvaluate_FloatingPointsEForm()
+    {
+        Formula testFormula = new Formula("6.7E-2 + x1");
+        Assert.IsTrue("5.067".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.IsTrue("0.1".Equals(testFormula.Evaluate(x1 => 3.3E-2)));
     }
 
 

@@ -53,6 +53,7 @@ namespace CS3500.DependencyGraph;
 public class DependencyGraph
 {
     private List<DependencyNode> connectionNodes; // The nodes containing values, allowing for reading and manipulation of the DependencyGraph
+    private int size; // The number of pairs in the DependencyGraph
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DependencyGraph"/> class.
@@ -69,7 +70,7 @@ public class DependencyGraph
     /// </summary>
     public int Size
     {
-        get { return connectionNodes.Count; }
+        get { return size; }
     }
 
 
@@ -197,6 +198,7 @@ public class DependencyGraph
         // add the dependents and dependees to either one in this process
         dependeeNode.dependents.Add(dependent);
         dependentNode.dependees.Add(dependee);
+        size++;
     }
 
 
@@ -216,6 +218,17 @@ public class DependencyGraph
         {
             dependeeNode.dependents.Remove(dependent);
             dependentNode.dependees.Remove(dependee);
+            size--;
+
+
+            if (dependeeNode.dependents.Count == 0 && dependeeNode.dependees.Count == 0)
+            {
+                connectionNodes.Remove(dependeeNode);
+            }
+            if (dependentNode.dependents.Count == 0 && dependentNode.dependees.Count == 0)
+            {
+                connectionNodes.Remove(dependentNode);
+            }
         }
     }
 
@@ -230,15 +243,23 @@ public class DependencyGraph
         DependencyNode node = GetNode(nodeName);
         List<string> tempDependents = new List<string>();
 
-        foreach (string dependent in newDependents)
+        if (node != null)
         {
-            if (dependent != node.nodeName)
-            {
-                tempDependents.Add(dependent);
-            }
+            tempDependents = node.GetDependents();
         }
 
-        node.dependents = tempDependents;
+        while (tempDependents.Count > 0)
+        {
+            RemoveDependency(nodeName, tempDependents[0]);
+        }
+
+        foreach (string dependent in newDependents)
+        {
+            if (dependent != nodeName)
+            {
+                AddDependency(nodeName, dependent);
+            }
+        }
     }
 
 
@@ -254,15 +275,23 @@ public class DependencyGraph
         DependencyNode node = GetNode(nodeName);
         List<string> tempDependees = new List<string>();
 
-        foreach (string dependee in newDependees)
+        if (node != null)
         {
-            if (dependee != node.nodeName)
-            {
-                tempDependees.Add(dependee);
-            }
+            tempDependees = node.GetDependees();
         }
 
-        node.dependees = tempDependees;
+        while (tempDependees.Count > 0)
+        {
+            RemoveDependency(tempDependees[0], nodeName);
+        }
+
+        foreach (string dependee in newDependees)
+        {
+            if (dependee != nodeName)
+            {
+                AddDependency(dependee, nodeName);
+            }
+        }
     }
 
 

@@ -391,7 +391,7 @@ public class Formula
     /// <returns> true if the two formulas are the same.</returns>
     public static bool operator ==(Formula f1, Formula f2)
     {
-        // FIXME: Write this method
+        return f1.Equals(f2);
     }
 
     /// <summary>
@@ -404,7 +404,7 @@ public class Formula
     /// <returns> true if the two formulas are not equal to each other.</returns>
     public static bool operator !=(Formula f1, Formula f2)
     {
-        // FIXME: Write this method
+        return !f1.Equals(f2);
     }
 
     /// <summary>
@@ -426,7 +426,22 @@ public class Formula
     /// </returns>
     public override bool Equals(object? obj)
     {
-        // FIXME: write this method
+        if(obj is not Formula)
+        {
+            return false;
+        }
+
+        Formula newFormula = obj as Formula;
+        string secondTokens = newFormula.ToString();
+
+        for(int i = 0; i < secondTokens.Length; i++)
+        {
+            if (!secondTokens[i].Equals(fullForm[i]))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 

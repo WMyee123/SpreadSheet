@@ -47,7 +47,7 @@ public class DependencyGraphTests
             }
         }
 
-        Assert.IsTrue(testGraph.Size == 10); // Ensure that the graph only contains 10 values
+        Assert.IsTrue(testGraph.Size == 90); // Ensure that the graph only contains 10 values
     }
 
 

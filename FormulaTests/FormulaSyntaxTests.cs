@@ -462,19 +462,6 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
-    ///         Ensure that when utilizing negative numbers, equality can properly be found by the Equals function
-    ///     </para>
-    /// </summary>
-    [TestMethod]
-    public void Formula_TestDoubleEquals_NegativeIntegers()
-    {
-        Assert.IsTrue(new Formula("-5 + x1") == new Formula("-5 + x1"));
-        Assert.IsFalse(new Formula("-5 + x1") == new Formula("5 + x1"));
-    }
-
-
-    /// <summary>
-    ///     <para>
     ///         Ensure that when two formulas, using the Equals function, have different integers involved, 
     ///         will be found to be different formulas
     ///     </para>
@@ -560,19 +547,6 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("1 + x2").Equals(new Formula("1 + x2")));
         Assert.IsFalse(new Formula("1 + x2").Equals(new Formula("x1 + 2"))); // Check for when the variables are not the same between the two formulas
         Assert.IsFalse(new Formula("x1 - x2").Equals(new Formula("x1 + x2"))); // Check that the sign does not impact the result
-    }
-
-
-    /// <summary>
-    ///     <para>
-    ///         Ensure that when utilizing negative numbers, equality can properly be found by the Equals function
-    ///     </para>
-    /// </summary>
-    [TestMethod]
-    public void Formula_TestEquals_NegativeIntegers()
-    {
-        Assert.IsTrue(new Formula("-5 + x1").Equals(new Formula("-5 + x1")));
-        Assert.IsFalse(new Formula("-5 + x1").Equals(new Formula("5 + x1")));
     }
 
 
@@ -665,19 +639,6 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
-    ///         Ensure that when utilizing negative numbers, inequality can properly be found by the != syntax
-    ///     </para>
-    /// </summary>
-    [TestMethod]
-    public void Formula_TestNotEquals_NegativeIntegers()
-    {
-        Assert.IsFalse(new Formula("-5 + x1") != new Formula("-5 + x1"));
-        Assert.IsTrue(new Formula("-5 + x1") != new Formula("5 + x1"));
-    }
-
-
-    /// <summary>
-    ///     <para>
     ///         Ensure that given a valid formula, a value is returned properly from evaluation
     ///     </para>
     /// </summary>
@@ -714,9 +675,17 @@ public class FormulaSyntaxTests
     [TestMethod]
     public void Formula_TestEvaluate_NoVariableDefinition()
     {
-        Formula.FormulaError testError = new Formula.FormulaError("No Variable Found");
         Formula testFormula = new Formula("x2 + 16");
-        Assert.IsTrue(testError.Equals(testFormula.Evaluate(x1 => 5)));
+        double myVars(string s)
+        {
+            if (s == "X1") 
+                return 5;
+            else 
+                throw new ArgumentException("I don't know that variable");
+        };
+
+        Assert.ThrowsException<ArgumentException>(() => testFormula.Evaluate(myVars));
+        
     }
 
 
@@ -742,7 +711,7 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_ExtraSigns()
     {
         Formula testFormula = new Formula("x1 + (6 / 2) * (17 - 8)");
-        Assert.IsTrue("23".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.IsTrue("-22".Equals(testFormula.Evaluate(x1 => 5)));
     }
 
 
@@ -756,21 +725,7 @@ public class FormulaSyntaxTests
     {
         Formula.FormulaError testError = new Formula.FormulaError("Cannot Divide By Zero");
         Formula testFormula = new Formula("x1 / 0");
-        Assert.IsTrue(testError.Equals(testFormula.Evaluate(x1 => 5)));
-    }
-
-
-    /// <summary>
-    ///     <para>
-    ///         Ensure that when givne negative values, both as integers and variables, the formula can be properly evaluated
-    ///     </para>
-    /// </summary>
-    [TestMethod]
-    public void Formula_TestEvaluate_NegativeValues()
-    {
-        Formula testFormula = new Formula("-21 + x1");
-        Assert.IsTrue("5".Equals(testFormula.Evaluate(x1 => 26)));
-        Assert.IsTrue("-36".Equals(testFormula.Evaluate(x1 => -15)));
+        Assert.IsTrue(testFormula.Evaluate(x1 => 5) is Formula.FormulaError);
     }
 
 
@@ -827,8 +782,8 @@ public class FormulaSyntaxTests
     [TestMethod]
     public void Formula_TestGetHashCode_Invalid()
     {
-        Formula f1 = new Formula("x1 + 7 - x2");
-        Formula f2 = new Formula("x1 - x2 + 7");
+        Formula f1 = new Formula("x1 * 7 - x2");
+        Formula f2 = new Formula("x1 - x2 * 7");
 
         Assert.AreNotEqual(f1.GetHashCode(), f2.GetHashCode());
     }

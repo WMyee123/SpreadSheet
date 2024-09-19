@@ -3,9 +3,24 @@
   <Hotspot>
     <Assembly>Formula</Assembly>
     <Class>CS3500.Formula.Formula</Class>
+    <MethodName>Evaluate(...)</MethodName>
+    <ShortName />
+    <Line>477</Line>
+    <FileIndex>0</FileIndex>
+    <Metrics>
+      <Metric>
+        <Name>Cyclomatic complexity</Name>
+        <Exceeded>true</Exceeded>
+        <Value>64</Value>
+      </Metric>
+    </Metrics>
+  </Hotspot>
+  <Hotspot>
+    <Assembly>Formula</Assembly>
+    <Class>CS3500.Formula.Formula</Class>
     <MethodName>TokenRulesValid(...)</MethodName>
     <ShortName />
-    <Line>308</Line>
+    <Line>309</Line>
     <FileIndex>0</FileIndex>
     <Metrics>
       <Metric>
@@ -20,7 +35,7 @@
     <Class>CS3500.Formula.Formula</Class>
     <MethodName>.ctor(...)</MethodName>
     <ShortName />
-    <Line>89</Line>
+    <Line>90</Line>
     <FileIndex>0</FileIndex>
     <Metrics>
       <Metric>

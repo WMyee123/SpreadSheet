@@ -18,6 +18,7 @@
 namespace CS3500.Formula;
 
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 /// <summary>
 ///   <para>
@@ -96,9 +97,9 @@ public class Formula
         fullForm = string.Empty;
         foreach(string currToken in tokens)
         {
-            if(float.TryParse(currToken, out float r))
+            if(double.TryParse(currToken, out double r))
             {
-                fullForm += float.Parse(currToken);
+                fullForm += double.Parse(currToken);
             }
             else
             {
@@ -426,23 +427,23 @@ public class Formula
     /// </returns>
     public override bool Equals(object? obj)
     {
-        if(obj is not Formula)
+        if(obj is Formula f)
         {
-            return false;
-        }
+            List<string> thisTokens = GetTokens(fullForm);
+            List<string> otherTokens = GetTokens(f.ToString());
 
-        Formula newFormula = obj as Formula;
-        string secondTokens = newFormula.ToString();
-
-        for(int i = 0; i < secondTokens.Length; i++)
-        {
-            if (!secondTokens[i].Equals(fullForm[i]))
+            for (int i = 0; i < thisTokens.Count; i++)
             {
-                return false;
+                if (thisTokens[i] != otherTokens[i])
+                {
+                    return false;
+                }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /// <summary>
@@ -474,7 +475,139 @@ public class Formula
     /// <returns> Either a double or a formula error, based on evaluating the formula.</returns>
     public object Evaluate(Lookup lookup)
     {
-        // FIXME: Implement the required algorithm here.
+        Stack<string> valueStack = new Stack<string>();
+        Stack<string> operatorStack = new Stack<string>();
+
+        foreach(string token in GetTokens(fullForm))
+        {
+            if (double.TryParse(token, out double d))
+            {
+                if (operatorStack.Count > 0)
+                {
+                    if (operatorStack.Peek() == "/" || operatorStack.Peek() == "*")
+                    {
+                        object newVal = MultiplyOrDivideTokens(d, operatorStack, valueStack);
+                        if (newVal is double)
+                        {
+                            valueStack.Push(((double)newVal).ToString());
+                        }
+                        else
+                        {
+                            return newVal;
+                        }
+                    }
+                    else
+                    {
+                        valueStack.Push(d.ToString());
+                    }
+                }
+                else
+                {
+                    valueStack.Push(d.ToString());
+                }
+            }
+            else if (GetVariables().Contains(token))
+            {
+                object currNum = lookup(token);
+
+                if (currNum is double)
+                {
+                    d = (double)currNum;
+
+                    if (operatorStack.Count > 0)
+                    {
+                        if(operatorStack.Peek() == "/" || operatorStack.Peek() == "*")
+                        {
+                            object newVal = MultiplyOrDivideTokens(d, operatorStack, valueStack);
+                            if (newVal is double)
+                            {
+                                valueStack.Push(((double)newVal).ToString());
+                            }
+                            else
+                            {
+                                return newVal;
+                            }
+                        }
+                    }
+                }
+                else if(currNum is FormulaError)
+                {
+                    return new FormulaError("No Reference to Variable " + currNum.ToString());
+                }
+
+                valueStack.Push(d.ToString());
+            }
+            else if (token == "*" || token == "/")
+            {
+                operatorStack.Push(token);
+            }
+            else if(token == "+" ||  token == "-")
+            {
+                if (operatorStack.Count > 0 && (operatorStack.Peek() == "+" || operatorStack.Peek() == "-"))
+                {
+                    object newToken = AddOrSubtractTokens(operatorStack, valueStack);
+                    if (newToken is double)
+                    {
+                        valueStack.Push(((double)newToken).ToString());
+                    }
+                }
+
+                operatorStack.Push(token);
+            }
+            else if(token == "(")
+            {
+                operatorStack.Push(token);
+            }
+            else if (token == ")")
+            {
+                string topOfStack = operatorStack.Peek();
+
+                if (topOfStack == "+" || topOfStack == "-")
+                {
+                    object newToken = AddOrSubtractTokens(operatorStack, valueStack);
+                    if (newToken is double)
+                    {
+                        valueStack.Push(((double)newToken).ToString());
+                    }
+                }
+
+                topOfStack = operatorStack.Peek();
+                if (topOfStack == "(")
+                {
+                    operatorStack.Pop();
+                }
+
+                topOfStack = operatorStack.Peek();
+                if(topOfStack == "*" || topOfStack == "/")
+                {
+                    object newVal = MultiplyOrDivideTokens(double.Parse(valueStack.Pop()), operatorStack, valueStack);
+                    if (newVal is double)
+                    {
+                        valueStack.Push(((double)newVal).ToString());
+                    }
+                    else
+                    {
+                        return newVal;
+                    }
+                }
+            }
+        }
+
+        if (operatorStack.Count > 0)
+        {
+            object newVal = AddOrSubtractTokens(operatorStack, valueStack);
+
+            if (newVal is double)
+            {
+                valueStack.Push(((double)newVal).ToString());
+            }
+            else
+            {
+                return newVal;
+            }
+        }
+
+        return valueStack.Pop();
     }
 
     /// <summary>
@@ -487,7 +620,80 @@ public class Formula
     /// <returns> The hashcode for the object. </returns>
     public override int GetHashCode()
     {
-        // FIXME: Implement the required algorithm here.
+        int fullHash = 0;
+        foreach(string token in GetTokens(fullForm))
+        {
+            if (token == "*")
+            {
+                fullHash *= token.GetHashCode();
+            }
+            else if (token == "/")
+            {
+                fullHash /= token.GetHashCode();
+            }
+            else
+            {
+                fullHash += token.GetHashCode();
+            }
+        }
+
+        return fullHash;
+    }
+
+
+    private object AddOrSubtractTokens(Stack<string> opStack, Stack<string> valStack)
+    {
+        if(opStack.Count > 0)
+        {
+            string currOperator = opStack.Pop();
+
+            double newVal = 0;
+            if (currOperator == "+")
+            {
+                double num1 = double.Parse(valStack.Pop());
+                double num2 = double.Parse(valStack.Pop());
+
+                newVal = num1 + num2;
+            }
+            else if (currOperator == "-")
+            {
+                double num1 = double.Parse(valStack.Pop());
+                double num2 = double.Parse(valStack.Pop());
+
+                newVal = num1 - num2;
+            }
+
+            return newVal;
+        }
+        else
+        {
+            return new FormulaError("No Items in OperatorStack");
+        }
+    }
+
+
+    private object MultiplyOrDivideTokens(double currToken, Stack<string> opStack, Stack<string> valStack)
+    {
+        string op = opStack.Pop();
+        string num = valStack.Pop();
+
+        if (op == "*")
+        {
+            currToken = currToken * double.Parse(num);
+        }
+        else
+        {
+            if(currToken == 0)
+            {
+                return new FormulaError("Cannot Divide By Zero");
+            }
+            else
+            {
+                currToken = double.Parse(num) / currToken;
+            }
+        }
+
+        return currToken;
     }
 
     // FIXME: add this code to your Formula Project as well!

@@ -936,7 +936,7 @@ public class DependencyGraphGradingTest
     ///   Increase weight of Stress Test 1.
     /// </summary>
     [TestMethod]
-    //[Timeout( 2000 )]
+    [Timeout( 2000 )]
     [TestCategory( "41" )]
     public void IncreaseGradeWeight3( )
     {

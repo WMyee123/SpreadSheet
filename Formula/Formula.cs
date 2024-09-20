@@ -304,7 +304,7 @@ public class Formula
     /// <param name="prevToken">
     ///     The token that determines the validity of the current token, allowing for proper understanding of the formula's requirements.
     /// </param>
-    /// <returns></returns>
+    /// <returns> A boolean statement as to if the tokens present in the formula are in a valid ordering between one another </returns>
     private bool TokenRulesValid(string token, string prevToken)
     {
         // Check the conditions of when the previous token was a variable
@@ -427,16 +427,19 @@ public class Formula
     /// </returns>
     public override bool Equals(object? obj)
     {
+        // Ensure that the object being compared to is another formula
         if(obj is Formula f)
         {
+            // Get the tokens of both formulas
             List<string> thisTokens = GetTokens(fullForm);
             List<string> otherTokens = GetTokens(f.ToString());
 
+            // Compare the two lists of tokens, ensuring that each one is equal, thus implying that the full equation is equal
             for (int i = 0; i < thisTokens.Count; i++)
             {
                 if (thisTokens[i] != otherTokens[i])
                 {
-                    return false;
+                    return false; // If any token is not equal, false is returned as the formulas are not the same
                 }
             }
 
@@ -475,30 +478,26 @@ public class Formula
     /// <returns> Either a double or a formula error, based on evaluating the formula.</returns>
     public object Evaluate(Lookup lookup)
     {
+        // Create the stacks to store values and operators in the formula
         Stack<string> valueStack = new Stack<string>();
         Stack<string> operatorStack = new Stack<string>();
 
         foreach(string token in GetTokens(fullForm))
         {
+            // If the token is an integer, these instructions are followed
             if (double.TryParse(token, out double d))
             {
-                if (operatorStack.Count > 0)
+                // If an operator is present and a multiplier or dividing symbol, the proper math is performed, otherwise the value is added to the value stack
+                if (operatorStack.Count > 0 && (operatorStack.Peek() == "/" || operatorStack.Peek() == "*"))
                 {
-                    if (operatorStack.Peek() == "/" || operatorStack.Peek() == "*")
+                    object newVal = MultiplyOrDivideTokens(d, operatorStack, valueStack);
+                    if (newVal is double)
                     {
-                        object newVal = MultiplyOrDivideTokens(d, operatorStack, valueStack);
-                        if (newVal is double)
-                        {
-                            valueStack.Push(((double)newVal).ToString());
-                        }
-                        else
-                        {
-                            return newVal;
-                        }
+                        valueStack.Push(((double)newVal).ToString());
                     }
                     else
                     {
-                        valueStack.Push(d.ToString());
+                        return newVal;
                     }
                 }
                 else
@@ -506,17 +505,19 @@ public class Formula
                     valueStack.Push(d.ToString());
                 }
             }
+            // If the token is a variable, these instructions are followed
             else if (GetVariables().Contains(token))
             {
-                object currNum = lookup(token);
-
-                if (currNum is double)
+                try
                 {
-                    d = (double)currNum;
+                    object currNum = lookup(token); // Get the value of this variable
 
-                    if (operatorStack.Count > 0)
+                    if (currNum is double)
                     {
-                        if(operatorStack.Peek() == "/" || operatorStack.Peek() == "*")
+                        d = (double)currNum;
+
+                        // The same instructions are done as for an integer if no exception is thrown
+                        if (operatorStack.Count > 0 && (operatorStack.Peek() == "/" || operatorStack.Peek() == "*"))
                         {
                             object newVal = MultiplyOrDivideTokens(d, operatorStack, valueStack);
                             if (newVal is double)
@@ -528,40 +529,50 @@ public class Formula
                                 return newVal;
                             }
                         }
+                        else
+                        {
+                            valueStack.Push(d.ToString());
+                        }
                     }
                 }
-                else if(currNum is FormulaError)
-                {
-                    return new FormulaError("No Reference to Variable " + currNum.ToString());
-                }
 
-                valueStack.Push(d.ToString());
+                // If no vlaue is found for this variable, a formulaError is returned
+                catch (Exception e)
+                {
+                    {
+                        return new FormulaError("No Reference to Variable " + token.ToString());
+                    }
+                }
             }
+            // If the token is a multiplier or dividing symbol, the operator is added to its stack
             else if (token == "*" || token == "/")
             {
                 operatorStack.Push(token);
             }
+            // If the token is a plus or minus symbol, these instructions are followed
             else if(token == "+" ||  token == "-")
             {
+                // If another plus or minus sybol is at the top of the operator stack, that operator is analyzed and implemented,
+                // regardless of this, the operator is pushed onto its stack after this check
                 if (operatorStack.Count > 0 && (operatorStack.Peek() == "+" || operatorStack.Peek() == "-"))
                 {
                     object newToken = AddOrSubtractTokens(operatorStack, valueStack);
-                    if (newToken is double)
-                    {
-                        valueStack.Push(((double)newToken).ToString());
-                    }
+                    valueStack.Push(((double)newToken).ToString());
                 }
 
                 operatorStack.Push(token);
             }
+            // If the token is an opening parenthesis, it is pushed onto the operator stack
             else if(token == "(")
             {
                 operatorStack.Push(token);
             }
+            // If the token is a closing parenthesis, these isntructions are followed
             else if (token == ")")
             {
                 string topOfStack = operatorStack.Peek();
 
+                // If the top of the stack is a plus or minus symbol first, the operator is implemented and the found value pushed onto the its stack
                 if (topOfStack == "+" || topOfStack == "-")
                 {
                     object newToken = AddOrSubtractTokens(operatorStack, valueStack);
@@ -571,12 +582,15 @@ public class Formula
                     }
                 }
 
+                // If the top of the stack is now an opening parenthesis, remove it form the operator stack
                 topOfStack = operatorStack.Peek();
                 if (topOfStack == "(")
                 {
                     operatorStack.Pop();
                 }
 
+                // If the top of the operator stack is a multiplier or division symbol, implement the operator and return the result
+                // This can result an OperatorError if dividing by zero
                 topOfStack = operatorStack.Peek();
                 if(topOfStack == "*" || topOfStack == "/")
                 {
@@ -593,18 +607,12 @@ public class Formula
             }
         }
 
+        // If there are still operator in that stack, it will always be a plus or minus symbol,
+        // thus implementing this symbol and pushing it to the stack allows for proper implementation
         if (operatorStack.Count > 0)
         {
-            object newVal = AddOrSubtractTokens(operatorStack, valueStack);
-
-            if (newVal is double)
-            {
-                valueStack.Push(((double)newVal).ToString());
-            }
-            else
-            {
-                return newVal;
-            }
+            double newVal = AddOrSubtractTokens(operatorStack, valueStack);
+            valueStack.Push(newVal.ToString());
         }
 
         return valueStack.Pop();
@@ -620,58 +628,51 @@ public class Formula
     /// <returns> The hashcode for the object. </returns>
     public override int GetHashCode()
     {
-        int fullHash = 0;
-        foreach(string token in GetTokens(fullForm))
-        {
-            if (token == "*")
-            {
-                fullHash *= token.GetHashCode();
-            }
-            else if (token == "/")
-            {
-                fullHash /= token.GetHashCode();
-            }
-            else
-            {
-                fullHash += token.GetHashCode();
-            }
-        }
-
-        return fullHash;
+        return fullForm.GetHashCode();
     }
 
 
-    private object AddOrSubtractTokens(Stack<string> opStack, Stack<string> valStack)
+    /// <summary>
+    ///     <para>
+    ///         Add or subtract two values from the top of the value stack, reading the value at the top of the operator to determine the operation necessary
+    ///     </para>
+    /// </summary>
+    /// <param name="opStack"> The operator stack that is currently being utilized </param>
+    /// <param name="valStack"> The value stack that is currently being utilized</param>
+    /// <returns> The value after adding or subtracting the value at the top of the stack </returns>
+    private double AddOrSubtractTokens(Stack<string> opStack, Stack<string> valStack)
     {
-        if(opStack.Count > 0)
+        string currOperator = opStack.Pop();
+
+        double newVal = 0;
+        if (currOperator == "+")
         {
-            string currOperator = opStack.Pop();
+            double num1 = double.Parse(valStack.Pop());
+            double num2 = double.Parse(valStack.Pop());
 
-            double newVal = 0;
-            if (currOperator == "+")
-            {
-                double num1 = double.Parse(valStack.Pop());
-                double num2 = double.Parse(valStack.Pop());
-
-                newVal = num1 + num2;
-            }
-            else if (currOperator == "-")
-            {
-                double num1 = double.Parse(valStack.Pop());
-                double num2 = double.Parse(valStack.Pop());
-
-                newVal = num1 - num2;
-            }
-
-            return newVal;
+            newVal = num2 + num1;
         }
-        else
+        else if (currOperator == "-")
         {
-            return new FormulaError("No Items in OperatorStack");
+            double num1 = double.Parse(valStack.Pop());
+            double num2 = double.Parse(valStack.Pop());
+
+            newVal = num2 - num1; // Num2 is placed first due to the stack being reversed and the second number being first in the order provided
         }
+
+        return newVal;
     }
 
 
+    /// <summary>
+    ///     <para>
+    ///         Multiply or divide a value from the value at the top of the value stack, using the operator at the top of the operator stack to determine the operation to implement
+    ///     </para>
+    /// </summary>
+    /// <param name="currToken"> The token that is to be multiplied or divided from, this being the divisor </param>
+    /// <param name="opStack"> The operator stack that is read from to determine whether to multiply or divide values </param>
+    /// <param name="valStack"> The value stack that is used to multiply or divide from the top of, with it representing the numerator </param>
+    /// <returns></returns>
     private object MultiplyOrDivideTokens(double currToken, Stack<string> opStack, Stack<string> valStack)
     {
         string op = opStack.Pop();
@@ -681,6 +682,7 @@ public class Formula
         {
             currToken = currToken * double.Parse(num);
         }
+        // If the operator is determined to divide the values, it divides the top of the value stack from the current token, returning a FormulaError if the current token is 0
         else
         {
             if(currToken == 0)
@@ -696,7 +698,6 @@ public class Formula
         return currToken;
     }
 
-    // FIXME: add this code to your Formula Project as well!
 
     /// <summary>
     /// Used as a possible return value of the Formula.Evaluate method.
@@ -751,8 +752,8 @@ public class FormulaFormatException : Exception
     ///   </para>
     /// </summary>
     /// <param name="message"> A developer defined message describing why the exception occured.</param>
-    public FormulaFormatException( string message )
-        : base( message )
+    public FormulaFormatException(string message)
+        : base(message)
     {
         // All this does is call the base constructor. No extra code needed.
     }

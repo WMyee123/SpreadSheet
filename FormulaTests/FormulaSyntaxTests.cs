@@ -552,6 +552,18 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
+    ///         Test for when the Equals method is used to equate a formula with something that is not of that type
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestEquals_NotValid()
+    {
+        Assert.IsFalse(new Formula("1 + x2").Equals(42));
+    }
+
+
+    /// <summary>
+    ///     <para>
     ///         Ensure that when two formulas with different integers are compared, they are found to not be equal
     ///     </para>
     /// </summary>
@@ -587,9 +599,9 @@ public class FormulaSyntaxTests
     [TestMethod]
     public void Formula_TestMethodNotEquals_Parenthesis()
     {
-        Assert.IsFalse (new Formula("(x1 + 5)") != new Formula("(x1 + 5)"));
+        Assert.IsFalse(new Formula("(x1 + 5)") != new Formula("(x1 + 5)"));
         Assert.IsTrue(new Formula("(x1 + 5)") != new Formula("x1 + 5")); // Check in the case that the parenthesis are not present in only 1 formula
-        Assert.IsFalse (new Formula("(5)") != new Formula("(5)")); // Check for when only a signle value is present in the parenthesis
+        Assert.IsFalse(new Formula("(5)") != new Formula("(5)")); // Check for when only a signle value is present in the parenthesis
     }
 
 
@@ -669,6 +681,19 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
+    ///         Ensure that an error is returned when dividing by a variable representing 0
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestEvaluate_VariableIsZero()
+    {
+        Formula testFormula = new Formula("1 / x1");
+        Assert.IsTrue(testFormula.Evaluate(x1 => 0) is Formula.FormulaError);
+    }
+
+
+    /// <summary>
+    ///     <para>
     ///         Ensure that when a variable is undefined, an error is returned to the user
     ///     </para>
     /// </summary>
@@ -678,14 +703,14 @@ public class FormulaSyntaxTests
         Formula testFormula = new Formula("x2 + 16");
         double myVars(string s)
         {
-            if (s == "X1") 
+            if (s == "X1")
                 return 5;
-            else 
+            else
                 throw new ArgumentException("I don't know that variable");
         };
 
-        Assert.ThrowsException<ArgumentException>(() => testFormula.Evaluate(myVars));
-        
+        Assert.IsTrue(testFormula.Evaluate(myVars) is Formula.FormulaError);
+
     }
 
 
@@ -711,9 +736,49 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_ExtraSigns()
     {
         Formula testFormula = new Formula("x1 + (6 / 2) * (17 - 8)");
-        Assert.IsTrue("-22".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.IsTrue("32".Equals(testFormula.Evaluate(x1 => 5)));
     }
 
+
+    [TestMethod]
+    public void Formula_TestEvaluate_DividingVariables()
+    {
+        Formula testFormula = new Formula("x1 / x2 * x3");
+        double testLookup(string s)
+        {
+            if (s == "X1")
+                return 10;
+            else if (s == "X2")
+                return 2;
+            else if (s == "X3")
+                return 5;
+            else
+                throw new ArgumentException("I don't know that variable");
+        }
+
+        Assert.IsTrue("25".Equals(testFormula.Evaluate(testLookup)));
+    }
+
+
+    [TestMethod]
+    public void Formula_TestEvaluate_VariablesNotFound_AfterMultiplyingOrDividing()
+    {
+        Formula testFormula = new Formula("x1 * x3");
+        double testLookup(string s)
+        {
+            if (s == "X1")
+                return 10;
+            else if (s == "X2")
+                return 2;
+            else
+                throw new ArgumentException("I don't know that variable");
+        }
+
+        Assert.IsTrue(testFormula.Evaluate(testLookup) is Formula.FormulaError);
+
+        testFormula = new Formula("x1 / x3");
+        Assert.IsTrue(testFormula.Evaluate(testLookup) is Formula.FormulaError);
+    }
 
     /// <summary>
     ///     <para>
@@ -759,6 +824,31 @@ public class FormulaSyntaxTests
     }
 
 
+    [TestMethod]
+    public void Formula_TestEvaluate_ClosingParenthesisRules()
+    {
+        Formula testFormula = new Formula("12 / (15 - 9)");
+        Assert.IsTrue("2".Equals(testFormula.Evaluate(x1 => 5)));
+
+        testFormula = new Formula("12 / (15 + 9)");
+        Assert.IsTrue("0.5".Equals(testFormula.Evaluate(x1 => 5)));
+
+        testFormula = new Formula("12 / (15 - 15)");
+        Assert.IsTrue(testFormula.Evaluate(x1 => 5) is Formula.FormulaError);
+    }
+
+
+    [TestMethod]
+    public void Formula_TestEvaluate_DoubleAdditionAndSubtraction()
+    {
+        Formula testFormula = new Formula("1 + 5 + 17");
+        Assert.IsTrue("23".Equals(testFormula.Evaluate(x1 => 5)));
+
+        testFormula = new Formula("17 - 5 - 1");
+        Assert.IsTrue("11".Equals(testFormula.Evaluate(x1 => 5)));
+    }
+
+
     /// <summary>
     ///     <para>
     ///         Ensure that when given two formula that are the same, they return the same hashcode
@@ -780,11 +870,47 @@ public class FormulaSyntaxTests
     ///     </para>
     /// </summary>
     [TestMethod]
-    public void Formula_TestGetHashCode_Invalid()
+    public void Formula_TestGetHashCode_Invalid_MulitplicationAndDivision()
     {
-        Formula f1 = new Formula("x1 * 7 - x2");
-        Formula f2 = new Formula("x1 - x2 * 7");
+        Formula f1 = new Formula("x1 * 7 / x2");
+        Formula f2 = new Formula("x1 / 7 * x2");
 
         Assert.AreNotEqual(f1.GetHashCode(), f2.GetHashCode());
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when given two formula with similar aspects, but differently ordered, it returns a seperate hashcode
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestGetHashCode_Invalid_AdditionAndSubtraction()
+    {
+        Formula f1 = new Formula("x1 + 7 - x2");
+        Formula f2 = new Formula("x1 - x2 + 7");
+
+        int f1Hash = f1.GetHashCode();
+        int f2Hash = f2.GetHashCode();
+
+        Assert.AreNotEqual(f1Hash, f2Hash);
+    }
+
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when given two variables that represent potentially different values, two seperate hash codes are different
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    public void Formula_TestGetHashCode_DifferentVariables()
+    {
+        Formula f1 = new Formula("x1 + 7");
+        Formula f2 = new Formula("x2 + 7");
+
+        int f1Hash = f1.GetHashCode();
+        int f2Hash = f2.GetHashCode();
+
+        Assert.AreNotEqual(f1Hash, f2Hash);
     }
 }

@@ -20,7 +20,7 @@
     <Class>CS3500.Formula.Formula</Class>
     <MethodName>Evaluate(...)</MethodName>
     <ShortName />
-    <Line>477</Line>
+    <Line>482</Line>
     <FileIndex>0</FileIndex>
     <Metrics>
       <Metric>
@@ -41,7 +41,7 @@
       <Metric>
         <Name>Cyclomatic complexity</Name>
         <Exceeded>true</Exceeded>
-        <Value>50</Value>
+        <Value>52</Value>
       </Metric>
     </Metrics>
   </Hotspot>

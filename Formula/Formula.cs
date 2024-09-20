@@ -1,4 +1,4 @@
-﻿// <copyright file="Formula_PS2.cs" company="UofU-CS3500">
+﻿// <copyright file="Formula.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // <summary>
@@ -13,7 +13,6 @@
 //     to represent your work and any changes you make.
 //   </para>
 // </summary>
-
 
 namespace CS3500.Formula;
 
@@ -60,6 +59,7 @@ public class Formula
     ///     allowing for simplified representations of the formula.
     /// </summary>
     private string fullForm;
+
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
     ///   <para>
@@ -90,7 +90,7 @@ public class Formula
     public Formula( string formula )
     {
         List<string> tokens = GetTokens(formula); // A list of every token within the formula for analysis
-        string prevToken = null; // The previous token, stored for ensuring the formula is valid
+        string prevToken = string.Empty; // The previous token, stored for ensuring the formula is valid
         int parenthesisCount = 0; // A count of the number of open/closing parenthesis, ensuring balance between the two tokens
 
         // Store and normalize the formula, allowing for proper representation of the tokens and values present within
@@ -131,7 +131,7 @@ public class Formula
             }
 
             // Check for token validity throwing an exception if the token is not
-            if (prevToken != null & !TokenRulesValid(normToken, prevToken))
+            if (prevToken != string.Empty && !TokenRulesValid(normToken, prevToken))
             {
                 throw new FormulaFormatException("Token not valid");
             }
@@ -147,7 +147,7 @@ public class Formula
             prevToken = normToken; // Reset the previous token to the current one such that the validity can be properly checked
         }
 
-        if((prevToken == "+" || prevToken == "-" || prevToken == "*" || prevToken == "/"))
+        if(prevToken == "+" || prevToken == "-" || prevToken == "*" || prevToken == "/")
         {
             throw new FormulaFormatException("Formula Cannot End on Operator");
         }
@@ -201,7 +201,7 @@ public class Formula
     ///     The string will contain no spaces.
     ///   </para>
     ///   <para>
-    ///     If the string is passed to the Formula constructor, the new Formula f 
+    ///     If the string is passed to the Formula constructor, the new Formula f
     ///     will be such that this.ToString() == f.ToString().
     ///   </para>
     ///   <para>
@@ -294,9 +294,9 @@ public class Formula
         return results;
     }
 
-
     /// <summary>
-    /// 
+    ///     Check that the token rules are valid while constructing the Formula object, ensuring that an invalid formula
+    ///     is not allowed throughout this process.
     /// </summary>
     /// <param name="token">
     ///     This is the token being inspected to determine the validity of it following the previous token in the formula.
@@ -304,65 +304,73 @@ public class Formula
     /// <param name="prevToken">
     ///     The token that determines the validity of the current token, allowing for proper understanding of the formula's requirements.
     /// </param>
-    /// <returns> A boolean statement as to if the tokens present in the formula are in a valid ordering between one another </returns>
+    /// <returns> A boolean statement as to if the tokens present in the formula are in a valid ordering between one another. </returns>
     private bool TokenRulesValid(string token, string prevToken)
     {
         // Check the conditions of when the previous token was a variable
         if (GetVariables().Contains(prevToken))
         {
             // Return true if an operator follows a variable
-            if(token == "+" || token == "-" || token == "/" || token == "*")
+            if (token == "+" || token == "-" || token == "/" || token == "*")
             {
                 return true;
             }
+
             // Return true if a closing parenthesis follows a variable, however an opening parenthesis cannot follow one
             else if (token == ")")
             {
                 return true;
             }
         }
+
         // Check the conditions for if the previous token was an operator
-        else if(prevToken == "+" || prevToken == "-" || prevToken == "/"|| prevToken == "*")
+        else if (prevToken == "+" || prevToken == "-" || prevToken == "/" || prevToken == "*")
         {
             // Return true if a variable or integer follows an operator
             if (GetVariables().Contains(token) || float.TryParse(token, out float i))
             {
                 return true;
             }
+
             // Return true if a parenthesis follows an operator
             else if (token == "(" || token == ")")
             {
                 return true;
             }
-        } 
+        }
+
         // Check the conditions for if the previous token was an opening parenthesis
-        else if(prevToken == "(")
+        else if (prevToken == "(")
         {
             // Return true if a variable or integer follows an opening parenthesis
             if (GetVariables().Contains(token) || float.TryParse(token, out float i))
             {
                 return true;
             }
+
             // Return true if a second opening parenthesis follows one
-            else if(token == "(")
+            else if (token == "(")
             {
                 return true;
             }
         }
+
         // Check the conditions for if the previous token was a closing parenthesis
-        else if(prevToken == ")")
+        else if (prevToken == ")")
         {
             // Return true if an operator follows a closing parenthesis
             if (token == "+" || token == "-" || token == "/" || token == "*")
             {
                 return true;
             }
+
             // Return true if a second closing parenthesis follows one
-            else if(token == ")")
+            else if (token == ")")
             {
                 return true;
             }
         }
+
         // Check the consitions for if the previous token was an integer
         else if (float.TryParse(prevToken, out float i))
         {
@@ -370,9 +378,10 @@ public class Formula
             if (token == "+" || token == "-" || token == "/" || token == "*")
             {
                 return true;
-            } 
+            }
+
             // Return true if a closing parenthesis follows an integer
-            else if(token == ")")
+            else if (token == ")")
             {
                 return true;
             }
@@ -380,7 +389,6 @@ public class Formula
 
         return false;
     }
-
 
     /// <summary>
     ///   <para>
@@ -390,10 +398,7 @@ public class Formula
     /// <param name="f1"> The first of two formula objects. </param>
     /// <param name="f2"> The second of two formula objects. </param>
     /// <returns> true if the two formulas are the same.</returns>
-    public static bool operator ==(Formula f1, Formula f2)
-    {
-        return f1.Equals(f2);
-    }
+    public static bool operator ==(Formula f1, Formula f2) => f1.Equals(f2);
 
     /// <summary>
     ///   <para>
@@ -403,22 +408,19 @@ public class Formula
     /// <param name="f1"> The first of two formula objects. </param>
     /// <param name="f2"> The second of two formula objects. </param>
     /// <returns> true if the two formulas are not equal to each other.</returns>
-    public static bool operator !=(Formula f1, Formula f2)
-    {
-        return !f1.Equals(f2);
-    }
+    public static bool operator !=(Formula f1, Formula f2) => !f1.Equals(f2);
 
     /// <summary>
     ///   <para>
     ///     Determines if two formula objects represent the same formula.
     ///   </para>
     ///   <para>
-    ///     By definition, if the parameter is null or does not reference 
+    ///     By definition, if the parameter is null or does not reference
     ///     a Formula Object then return false.
     ///   </para>
     ///   <para>
     ///     Two Formulas are considered equal if their canonical string representations
-    ///     (as defined by ToString) are equal.  
+    ///     (as defined by ToString) are equal.
     ///   </para>
     /// </summary>
     /// <param name="obj"> The other object.</param>
@@ -461,7 +463,7 @@ public class Formula
     ///   </remarks>
     ///   <para>
     ///     If no undefined variables or divisions by zero are encountered when evaluating
-    ///     this Formula, the numeric value of the formula is returned.  Otherwise, a 
+    ///     this Formula, the numeric value of the formula is returned.  Otherwise, a
     ///     FormulaError is returned (with a meaningful explanation as the Reason property).
     ///   </para>
     ///   <para>
@@ -471,7 +473,7 @@ public class Formula
     /// <param name="lookup">
     ///   <para>
     ///     Given a variable symbol as its parameter, lookup returns the variable's (double) value
-    ///     (if it has one) or throws an ArgumentException (otherwise).  This method should expect 
+    ///     (if it has one) or throws an ArgumentException (otherwise).  This method should expect
     ///     variable names to be capitalized.
     ///   </para>
     /// </param>
@@ -505,6 +507,7 @@ public class Formula
                     valueStack.Push(d.ToString());
                 }
             }
+
             // If the token is a variable, these instructions are followed
             else if (GetVariables().Contains(token))
             {
@@ -537,20 +540,22 @@ public class Formula
                 }
 
                 // If no vlaue is found for this variable, a formulaError is returned
-                catch (Exception e)
+                catch (Exception)
                 {
                     {
                         return new FormulaError("No Reference to Variable " + token.ToString());
                     }
                 }
             }
+
             // If the token is a multiplier or dividing symbol, the operator is added to its stack
             else if (token == "*" || token == "/")
             {
                 operatorStack.Push(token);
             }
+
             // If the token is a plus or minus symbol, these instructions are followed
-            else if(token == "+" ||  token == "-")
+            else if (token == "+" || token == "-")
             {
                 // If another plus or minus sybol is at the top of the operator stack, that operator is analyzed and implemented,
                 // regardless of this, the operator is pushed onto its stack after this check
@@ -562,11 +567,13 @@ public class Formula
 
                 operatorStack.Push(token);
             }
+
             // If the token is an opening parenthesis, it is pushed onto the operator stack
-            else if(token == "(")
+            else if (token == "(")
             {
                 operatorStack.Push(token);
             }
+
             // If the token is a closing parenthesis, these isntructions are followed
             else if (token == ")")
             {
@@ -592,7 +599,7 @@ public class Formula
                 // If the top of the operator stack is a multiplier or division symbol, implement the operator and return the result
                 // This can result an OperatorError if dividing by zero
                 topOfStack = operatorStack.Peek();
-                if(topOfStack == "*" || topOfStack == "/")
+                if (topOfStack == "*" || topOfStack == "/")
                 {
                     object newVal = MultiplyOrDivideTokens(double.Parse(valueStack.Pop()), operatorStack, valueStack);
                     if (newVal is double)
@@ -631,15 +638,14 @@ public class Formula
         return fullForm.GetHashCode();
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Add or subtract two values from the top of the value stack, reading the value at the top of the operator to determine the operation necessary
+    ///         Add or subtract two values from the top of the value stack, reading the value at the top of the operator to determine the operation necessary.
     ///     </para>
     /// </summary>
-    /// <param name="opStack"> The operator stack that is currently being utilized </param>
-    /// <param name="valStack"> The value stack that is currently being utilized</param>
-    /// <returns> The value after adding or subtracting the value at the top of the stack </returns>
+    /// <param name="opStack"> The operator stack that is currently being utilized. </param>
+    /// <param name="valStack"> The value stack that is currently being utilized. </param>
+    /// <returns> The value after adding or subtracting the value at the top of the stack. </returns>
     private double AddOrSubtractTokens(Stack<string> opStack, Stack<string> valStack)
     {
         string currOperator = opStack.Pop();
@@ -663,16 +669,15 @@ public class Formula
         return newVal;
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Multiply or divide a value from the value at the top of the value stack, using the operator at the top of the operator stack to determine the operation to implement
+    ///         Multiply or divide a value from the value at the top of the value stack, using the operator at the top of the operator stack to determine the operation to implement.
     ///     </para>
     /// </summary>
-    /// <param name="currToken"> The token that is to be multiplied or divided from, this being the divisor </param>
-    /// <param name="opStack"> The operator stack that is read from to determine whether to multiply or divide values </param>
-    /// <param name="valStack"> The value stack that is used to multiply or divide from the top of, with it representing the numerator </param>
-    /// <returns></returns>
+    /// <param name="currToken"> The token that is to be multiplied or divided from, this being the divisor. </param>
+    /// <param name="opStack"> The operator stack that is read from to determine whether to multiply or divide values. </param>
+    /// <param name="valStack"> The value stack that is used to multiply or divide from the top of, with it representing the numerator. </param>
+    /// <returns> An object representing the value after the operation, or a FormulaError object due to dividing by zero. </returns>
     private object MultiplyOrDivideTokens(double currToken, Stack<string> opStack, Stack<string> valStack)
     {
         string op = opStack.Pop();
@@ -682,6 +687,7 @@ public class Formula
         {
             currToken = currToken * double.Parse(num);
         }
+
         // If the operator is determined to divide the values, it divides the top of the value stack from the current token, returning a FormulaError if the current token is 0
         else
         {
@@ -697,48 +703,46 @@ public class Formula
 
         return currToken;
     }
+}
 
-
+/// <summary>
+/// Used as a possible return value of the Formula.Evaluate method.
+/// </summary>
+public class FormulaError
+{
     /// <summary>
-    /// Used as a possible return value of the Formula.Evaluate method.
+    ///   Initializes a new instance of the <see cref="FormulaError"/> class.
+    ///   <para>
+    ///     Constructs a FormulaError containing the explanatory reason.
+    ///   </para>
     /// </summary>
-    public class FormulaError
+    /// <param name="message"> Contains a message for why the error occurred.</param>
+    public FormulaError(string message)
     {
-        /// <summary>
-        ///   Initializes a new instance of the <see cref="FormulaError"/> class.
-        ///   <para>
-        ///     Constructs a FormulaError containing the explanatory reason.
-        ///   </para>
-        /// </summary>
-        /// <param name="message"> Contains a message for why the error occurred.</param>
-        public FormulaError(string message)
-        {
-            Reason = message;
-        }
-
-        /// <summary>
-        ///  Gets the reason why this FormulaError was created.
-        /// </summary>
-        public string Reason { get; private set; }
+        Reason = message;
     }
 
     /// <summary>
-    ///   Any method meeting this type signature can be used for
-    ///   looking up the value of a variable.  In general the expected behavior is that
-    ///   the Lookup method will "know" about all variables in a formula
-    ///   and return their appropriate value.
+    ///  Gets the reason why this FormulaError was created.
     /// </summary>
-    /// <exception cref="ArgumentException">
-    ///   If a variable name is provided that is not recognized by the implementing method,
-    ///   then the method should throw an ArgumentException.
-    /// </exception>
-    /// <param name="variableName">
-    ///   The name of the variable (e.g., "A1") to lookup.
-    /// </param>
-    /// <returns> The value of the given variable (if one exists). </returns>
-    public delegate double Lookup(string variableName);
+    public string Reason { get; private set; }
 }
 
+/// <summary>
+///   Any method meeting this type signature can be used for
+///   looking up the value of a variable.  In general the expected behavior is that
+///   the Lookup method will "know" about all variables in a formula
+///   and return their appropriate value.
+/// </summary>
+/// <exception cref="ArgumentException">
+///   If a variable name is provided that is not recognized by the implementing method,
+///   then the method should throw an ArgumentException.
+/// </exception>
+/// <param name="variableName">
+///   The name of the variable (e.g., "A1") to lookup.
+/// </param>
+/// <returns> The value of the given variable (if one exists). </returns>
+public delegate double Lookup(string variableName);
 
 /// <summary>
 ///   Used to report syntax errors in the argument to the Formula constructor.

@@ -7,6 +7,7 @@
 namespace CS3500.FormulaTests;
 
 using CS3500.Formula; // Change this using statement to use different formula implementations.
+using static Formula.FormulaError; // Ensure that FormulaErrors are properly tested for
 
 /// <summary>
 ///   <para>
@@ -688,7 +689,7 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_VariableIsZero()
     {
         Formula testFormula = new Formula("1 / x1");
-        Assert.IsTrue(testFormula.Evaluate(x1 => 0) is Formula.FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(x1 => 0) is FormulaError);
     }
 
 
@@ -709,7 +710,7 @@ public class FormulaSyntaxTests
                 throw new ArgumentException("I don't know that variable");
         };
 
-        Assert.IsTrue(testFormula.Evaluate(myVars) is Formula.FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(myVars) is FormulaError);
 
     }
 
@@ -786,10 +787,10 @@ public class FormulaSyntaxTests
                 throw new ArgumentException("I don't know that variable");
         }
 
-        Assert.IsTrue(testFormula.Evaluate(testLookup) is Formula.FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(testLookup) is FormulaError);
 
         testFormula = new Formula("x1 / x3");
-        Assert.IsTrue(testFormula.Evaluate(testLookup) is Formula.FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(testLookup) is FormulaError);
     }
 
     /// <summary>
@@ -800,9 +801,9 @@ public class FormulaSyntaxTests
     [TestMethod]
     public void Formula_TestEvaluate_DivideByZero()
     {
-        Formula.FormulaError testError = new Formula.FormulaError("Cannot Divide By Zero");
+        FormulaError testError = new FormulaError("Cannot Divide By Zero");
         Formula testFormula = new Formula("x1 / 0");
-        Assert.IsTrue(testFormula.Evaluate(x1 => 5) is Formula.FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(x1 => 5) is FormulaError);
     }
 
 
@@ -851,7 +852,7 @@ public class FormulaSyntaxTests
         Assert.IsTrue("0.5".Equals(testFormula.Evaluate(x1 => 5)));
 
         testFormula = new Formula("12 / (15 - 15)"); // Test for when dividing by zero after closing parenthesis
-        Assert.IsTrue(testFormula.Evaluate(x1 => 5) is Formula.FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(x1 => 5) is FormulaError);
     }
 
 

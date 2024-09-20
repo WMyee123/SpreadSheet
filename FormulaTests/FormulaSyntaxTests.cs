@@ -740,6 +740,12 @@ public class FormulaSyntaxTests
     }
 
 
+    /// <summary>
+    ///     <para>
+    ///         Check that variables can properly be divided and multiplied with, getting the correct value once complete
+    ///     </para>
+    /// </summary>
+    /// <exception cref="ArgumentException"> Throw an exception if a variable appears that is undefined </exception>
     [TestMethod]
     public void Formula_TestEvaluate_DividingVariables()
     {
@@ -760,6 +766,12 @@ public class FormulaSyntaxTests
     }
 
 
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when multiplying or dividing a variable, if you cannot find its value, a FormulaError is returned as a result
+    ///     </para>
+    /// </summary>
+    /// <exception cref="ArgumentException"></exception>
     [TestMethod]
     public void Formula_TestEvaluate_VariablesNotFound_AfterMultiplyingOrDividing()
     {
@@ -824,20 +836,30 @@ public class FormulaSyntaxTests
     }
 
 
+    /// <summary>
+    ///     <para>
+    ///         Ensure that all rules following a closing parenthesis being the token are properly followed in the order specified
+    ///     </para>
+    /// </summary>
     [TestMethod]
     public void Formula_TestEvaluate_ClosingParenthesisRules()
     {
-        Formula testFormula = new Formula("12 / (15 - 9)");
+        Formula testFormula = new Formula("12 / (15 - 9)"); // Test for subtraction being followed specifically
         Assert.IsTrue("2".Equals(testFormula.Evaluate(x1 => 5)));
 
-        testFormula = new Formula("12 / (15 + 9)");
+        testFormula = new Formula("12 / (15 + 9)"); // Test for addition being followed specifically
         Assert.IsTrue("0.5".Equals(testFormula.Evaluate(x1 => 5)));
 
-        testFormula = new Formula("12 / (15 - 15)");
+        testFormula = new Formula("12 / (15 - 15)"); // Test for when dividing by zero after closing parenthesis
         Assert.IsTrue(testFormula.Evaluate(x1 => 5) is Formula.FormulaError);
     }
 
 
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when adding or subtracting multiple times in a row, the value are added prior to addign the operator to its stack
+    ///     </para>
+    /// </summary>
     [TestMethod]
     public void Formula_TestEvaluate_DoubleAdditionAndSubtraction()
     {

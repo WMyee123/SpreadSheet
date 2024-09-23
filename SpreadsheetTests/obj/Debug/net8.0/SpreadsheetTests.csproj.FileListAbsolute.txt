@@ -1,0 +1,6 @@
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.csproj.AssemblyReference.cache
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.AssemblyInfoInputs.cache
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.AssemblyInfo.cs
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.csproj.CoreCompileInputs.cache
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.sourcelink.json

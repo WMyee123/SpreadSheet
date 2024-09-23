@@ -1,0 +1,5 @@
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.AssemblyInfoInputs.cache
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.AssemblyInfo.cs
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.csproj.CoreCompileInputs.cache
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.sourcelink.json

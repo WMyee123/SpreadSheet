@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SpreadsheetTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f59b37b177378f8eff6230a9e5e38e2170f746b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c53db415c46b65187db7a731a538a6ad2b5162e6")]
 [assembly: System.Reflection.AssemblyProductAttribute("SpreadsheetTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SpreadsheetTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -30,4 +30,5 @@ relative to one another.
 	Assignment 2: Time Expected - 15		Time Spent - 12
 	Assignment 3: Time Expected - 16		Time Spent - 11
 	Assignment 4: Time Expected - 13		Time Spent - 17
+	Assignment 5: Time Expected - 12		Time Spent - 
 ~~~

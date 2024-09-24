@@ -568,12 +568,6 @@ public class Formula
                 operatorStack.Push(token);
             }
 
-            // If the token is an opening parenthesis, it is pushed onto the operator stack
-            else if (token == "(")
-            {
-                operatorStack.Push(token);
-            }
-
             // If the token is a closing parenthesis, these isntructions are followed
             else if (token == ")")
             {

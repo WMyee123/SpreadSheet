@@ -659,7 +659,7 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_Base()
     {
         Formula testFormula = new Formula("x1 + 16");
-        Assert.IsTrue("21".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.AreEqual(21.0, testFormula.Evaluate(x1 => 5));
     }
 
 
@@ -676,7 +676,7 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_NoVariables()
     {
         Formula testFormula = new Formula("1 + 14");
-        Assert.IsTrue("15".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.AreEqual(15.0, testFormula.Evaluate(x1 => 5));
     }
 
 
@@ -724,7 +724,7 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_MultipleVariables()
     {
         Formula testFormula = new Formula("x1 + x2");
-        Assert.IsTrue("10".Equals(testFormula.Evaluate((name) => 5)));
+        Assert.AreEqual(10.0, testFormula.Evaluate((name) => 5));
     }
 
 
@@ -737,7 +737,7 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_ExtraSigns()
     {
         Formula testFormula = new Formula("x1 + (6 / 2) * (17 - 8)");
-        Assert.IsTrue("32".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.AreEqual(32.0, testFormula.Evaluate(x1 => 5));
     }
 
 
@@ -763,7 +763,7 @@ public class FormulaSyntaxTests
                 throw new ArgumentException("I don't know that variable");
         }
 
-        Assert.IsTrue("25".Equals(testFormula.Evaluate(testLookup)));
+        Assert.AreEqual(25.0, testFormula.Evaluate(testLookup));
     }
 
 
@@ -817,8 +817,10 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_FloatingPointsDecimal()
     {
         Formula testFormula = new Formula("0.67 + x1");
-        Assert.IsTrue("5.67".Equals(testFormula.Evaluate(x1 => 5)));
-        Assert.IsTrue("1".Equals(testFormula.Evaluate(x1 => 0.33)));
+        double solution = (double)testFormula.Evaluate(x1 => 5);
+        Assert.AreEqual(5.67, solution);
+
+        Assert.AreEqual(1.0, testFormula.Evaluate(x1 => 0.33));
     }
 
 
@@ -832,8 +834,8 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_FloatingPointsEForm()
     {
         Formula testFormula = new Formula("6.7E-2 + x1");
-        Assert.IsTrue("5.067".Equals(testFormula.Evaluate(x1 => 5)));
-        Assert.IsTrue("0.1".Equals(testFormula.Evaluate(x1 => 3.3E-2)));
+        Assert.AreEqual(5.067, testFormula.Evaluate(x1 => 5));
+        Assert.AreEqual(0.1, testFormula.Evaluate(x1 => 3.3E-2));
     }
 
 
@@ -846,10 +848,10 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_ClosingParenthesisRules()
     {
         Formula testFormula = new Formula("12 / (15 - 9)"); // Test for subtraction being followed specifically
-        Assert.IsTrue("2".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.AreEqual(2.0, testFormula.Evaluate(x1 => 5));
 
         testFormula = new Formula("12 / (15 + 9)"); // Test for addition being followed specifically
-        Assert.IsTrue("0.5".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.AreEqual(0.5, testFormula.Evaluate(x1 => 5));
 
         testFormula = new Formula("12 / (15 - 15)"); // Test for when dividing by zero after closing parenthesis
         Assert.IsTrue(testFormula.Evaluate(x1 => 5) is FormulaError);
@@ -865,10 +867,10 @@ public class FormulaSyntaxTests
     public void Formula_TestEvaluate_DoubleAdditionAndSubtraction()
     {
         Formula testFormula = new Formula("1 + 5 + 17");
-        Assert.IsTrue("23".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.AreEqual(23.0, testFormula.Evaluate(x1 => 5));
 
         testFormula = new Formula("17 - 5 - 1");
-        Assert.IsTrue("11".Equals(testFormula.Evaluate(x1 => 5)));
+        Assert.AreEqual(11.0, testFormula.Evaluate(x1 => 5));
     }
 
 

@@ -3,3 +3,14 @@ C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.AssemblyIn
 C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.AssemblyInfo.cs
 C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.csproj.CoreCompileInputs.cache
 C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.sourcelink.json
+C:\Users\myers\Downloads\ps1\Spreadsheet\bin\Debug\net8.0\Spreadsheet.deps.json
+C:\Users\myers\Downloads\ps1\Spreadsheet\bin\Debug\net8.0\Spreadsheet.dll
+C:\Users\myers\Downloads\ps1\Spreadsheet\bin\Debug\net8.0\Spreadsheet.pdb
+C:\Users\myers\Downloads\ps1\Spreadsheet\bin\Debug\net8.0\Formula.dll
+C:\Users\myers\Downloads\ps1\Spreadsheet\bin\Debug\net8.0\Formula.pdb
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.csproj.AssemblyReference.cache
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsh.C7A442E1.Up2Date
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.dll
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\refint\Spreadsheet.dll
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.pdb
+C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\ref\Spreadsheet.dll

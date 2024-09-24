@@ -107,18 +107,27 @@ public class Formula
             }
         }
 
+        HashSet<string> variables = GetVariables().ToHashSet(); // Get the variables present to allow for faster runtimes
+
         // Throw an exception if the formula is empty
-        if(tokens.Count == 0)
+        if (tokens.Count == 0)
         {
             throw new FormulaFormatException("Empty Formulas Not Valid");
         }
 
         string normToken;
+        bool isOp = false;
 
         // Count the tokens, checking for validity, if the token is not valid an exception is thrown
         foreach (string token in tokens)
         {
             normToken = token.ToUpper();
+            isOp = false; // A value to tell if the token is an operator
+
+            if (normToken == "+" || normToken == "-" || normToken == "*" || normToken == "/")
+            {
+                isOp = true;
+            }
 
             // Count the numbers of opening and closing parenthesis, comparing the counts to ensure balance
             if (normToken == "(")
@@ -131,15 +140,15 @@ public class Formula
             }
 
             // Check for token validity throwing an exception if the token is not
-            if (prevToken != string.Empty && !TokenRulesValid(normToken, prevToken))
+            if (prevToken != string.Empty && !TokenRulesValid(normToken, prevToken, variables))
             {
                 throw new FormulaFormatException("Token not valid");
             }
-            else if ((normToken == "+" || normToken == "-" || normToken == "*" || normToken == "/") && prevToken == null)
+            else if (isOp && prevToken == null)
             {
                 throw new FormulaFormatException("Token not Valid");
             }
-            else if(!GetVariables().Contains(normToken) && !float.TryParse(normToken, out float r) && !(normToken == "+" || normToken == "-" || normToken == "*" || normToken == "/" || normToken == "(" || normToken == ")"))
+            else if(!variables.Contains(normToken) && !double.TryParse(normToken, out double r) && !(isOp || normToken == "(" || normToken == ")"))
             {
                 throw new FormulaFormatException("Token not Valid");
             }
@@ -147,7 +156,7 @@ public class Formula
             prevToken = normToken; // Reset the previous token to the current one such that the validity can be properly checked
         }
 
-        if(prevToken == "+" || prevToken == "-" || prevToken == "*" || prevToken == "/")
+        if(isOp)
         {
             throw new FormulaFormatException("Formula Cannot End on Operator");
         }
@@ -179,8 +188,9 @@ public class Formula
     public ISet<string> GetVariables( )
     {
         HashSet<string> variables = new HashSet<string>();
+        List<string> tokens = GetTokens(fullForm);
 
-        foreach(string token in GetTokens(fullForm))
+        foreach (string token in tokens)
         {
             string normToken = token.ToUpper();
 
@@ -305,10 +315,10 @@ public class Formula
     ///     The token that determines the validity of the current token, allowing for proper understanding of the formula's requirements.
     /// </param>
     /// <returns> A boolean statement as to if the tokens present in the formula are in a valid ordering between one another. </returns>
-    private bool TokenRulesValid(string token, string prevToken)
+    private bool TokenRulesValid(string token, string prevToken, HashSet<string> validVars)
     {
         // Check the conditions of when the previous token was a variable
-        if (GetVariables().Contains(prevToken))
+        if (validVars.Contains(prevToken))
         {
             // Return true if an operator follows a variable
             if (token == "+" || token == "-" || token == "/" || token == "*")
@@ -327,7 +337,7 @@ public class Formula
         else if (prevToken == "+" || prevToken == "-" || prevToken == "/" || prevToken == "*")
         {
             // Return true if a variable or integer follows an operator
-            if (GetVariables().Contains(token) || float.TryParse(token, out float i))
+            if (validVars.Contains(token) || float.TryParse(token, out float i))
             {
                 return true;
             }
@@ -343,7 +353,7 @@ public class Formula
         else if (prevToken == "(")
         {
             // Return true if a variable or integer follows an opening parenthesis
-            if (GetVariables().Contains(token) || float.TryParse(token, out float i))
+            if (validVars.Contains(token) || float.TryParse(token, out float i))
             {
                 return true;
             }
@@ -483,8 +493,10 @@ public class Formula
         // Create the stacks to store values and operators in the formula
         Stack<string> valueStack = new Stack<string>();
         Stack<string> operatorStack = new Stack<string>();
+        HashSet<string> variables = GetVariables().ToHashSet();
+        List<string> tokens = GetTokens(fullForm);
 
-        foreach(string token in GetTokens(fullForm))
+        foreach (string token in tokens)
         {
             // If the token is an integer, these instructions are followed
             if (double.TryParse(token, out double d))
@@ -509,7 +521,7 @@ public class Formula
             }
 
             // If the token is a variable, these instructions are followed
-            else if (GetVariables().Contains(token))
+            else if (variables.Contains(token))
             {
                 try
                 {
@@ -548,8 +560,8 @@ public class Formula
                 }
             }
 
-            // If the token is a multiplier or dividing symbol, the operator is added to its stack
-            else if (token == "*" || token == "/")
+            // If the token is a multiplier or dividing symbol, the operator is added to its stack, along with opening parenthesis
+            else if (token == "*" || token == "/" || token == "(")
             {
                 operatorStack.Push(token);
             }
@@ -592,17 +604,20 @@ public class Formula
 
                 // If the top of the operator stack is a multiplier or division symbol, implement the operator and return the result
                 // This can result an OperatorError if dividing by zero
-                topOfStack = operatorStack.Peek();
-                if (topOfStack == "*" || topOfStack == "/")
+                if (operatorStack.Count > 0)
                 {
-                    object newVal = MultiplyOrDivideTokens(double.Parse(valueStack.Pop()), operatorStack, valueStack);
-                    if (newVal is double)
+                    topOfStack = operatorStack.Peek();
+                    if (topOfStack == "*" || topOfStack == "/")
                     {
-                        valueStack.Push(((double)newVal).ToString());
-                    }
-                    else
-                    {
-                        return newVal;
+                        object newVal = MultiplyOrDivideTokens(double.Parse(valueStack.Pop()), operatorStack, valueStack);
+                        if (newVal is double)
+                        {
+                            valueStack.Push(((double)newVal).ToString());
+                        }
+                        else
+                        {
+                            return newVal;
+                        }
                     }
                 }
             }
@@ -616,7 +631,7 @@ public class Formula
             valueStack.Push(newVal.ToString());
         }
 
-        return valueStack.Pop();
+        return double.Parse(valueStack.Pop());
     }
 
     /// <summary>
@@ -642,25 +657,17 @@ public class Formula
     /// <returns> The value after adding or subtracting the value at the top of the stack. </returns>
     private double AddOrSubtractTokens(Stack<string> opStack, Stack<string> valStack)
     {
-        string currOperator = opStack.Pop();
+        double num1 = double.Parse(valStack.Pop());
+        double num2 = double.Parse(valStack.Pop());
 
-        double newVal = 0;
-        if (currOperator == "+")
+        if (opStack.Pop() == "+")
         {
-            double num1 = double.Parse(valStack.Pop());
-            double num2 = double.Parse(valStack.Pop());
-
-            newVal = num2 + num1;
+            return num2 + num1;
         }
-        else if (currOperator == "-")
+        else
         {
-            double num1 = double.Parse(valStack.Pop());
-            double num2 = double.Parse(valStack.Pop());
-
-            newVal = num2 - num1; // Num2 is placed first due to the stack being reversed and the second number being first in the order provided
+            return num2 - num1; // Num2 is placed first due to the stack being reversed and the second number being first in the order provided
         }
-
-        return newVal;
     }
 
     /// <summary>
@@ -679,7 +686,7 @@ public class Formula
 
         if (op == "*")
         {
-            currToken = currToken * double.Parse(num);
+            return currToken * double.Parse(num);
         }
 
         // If the operator is determined to divide the values, it divides the top of the value stack from the current token, returning a FormulaError if the current token is 0
@@ -691,11 +698,9 @@ public class Formula
             }
             else
             {
-                currToken = double.Parse(num) / currToken;
+                return double.Parse(num) / currToken;
             }
         }
-
-        return currToken;
     }
 }
 

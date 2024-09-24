@@ -10,4 +10,20 @@
     <ProjectReference Include="..\Formula\Formula.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\myers\Downloads\ps1\Spreadsheet\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\myers\Downloads\ps1\Spreadsheet\.editorconfig" />
+  </ItemGroup>
+
 </Project>

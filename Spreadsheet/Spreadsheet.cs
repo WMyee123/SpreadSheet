@@ -86,6 +86,7 @@ public class InvalidNameException : Exception
 /// </summary>
 public class Spreadsheet
 {
+    Dictionary<string, cell> cells;
 
     /// <summary>
     /// Provides a copy of the names of all of the cells in the spreadsheet

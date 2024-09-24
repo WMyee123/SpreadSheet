@@ -87,12 +87,13 @@ public class SpreadsheetTests
     ///     </para>
     /// </summary>
     [TestMethod]
+    [ExpectedException (typeof(CircularException))]
     public void Spreadsheet_TestSetCellContents_Formula_CircularDependency()
     {
         Spreadsheet testSheet = new Spreadsheet();
 
         Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", new Formula("B1 + 4")));
-        Assert.ThrowsException<CircularException>(testSheet.SetCellContents("B1", new Formula("A1 * 2")));
+        testSheet.SetCellContents("B1", new Formula("A1 * 2"));
     }
 
 
@@ -102,11 +103,12 @@ public class SpreadsheetTests
     ///     </para>
     /// </summary>
     [TestMethod]
+    [ExpectedException (typeof(InvalidNameException))]
     public void Spreadsheet_TestSetCellContents_InvalidName()
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        Assert.ThrowsException<InvalidNameException>(testSheet.SetCellContents("17A", "null"));
+        testSheet.SetCellContents("17A", "null");
     }
 
 

@@ -7,6 +7,7 @@
 // - Updated documentation
 namespace CS3500.Spreadsheet;
 
+using CS3500.DependencyGraph;
 using CS3500.Formula;
 using System.ComponentModel;
 
@@ -86,7 +87,8 @@ public class InvalidNameException : Exception
 /// </summary>
 public class Spreadsheet
 {
-    Dictionary<string, cell> cells;
+    Dictionary<string, Cell> cells;
+    DependencyGraph dependencies = new DependencyGraph();
 
     /// <summary>
     /// Provides a copy of the names of all of the cells in the spreadsheet
@@ -97,7 +99,7 @@ public class Spreadsheet
     /// </returns>
     public ISet<string> GetNamesOfAllNonemptyCells()
     {
-        throw new NotImplementedException();
+        return cells.Keys.ToHashSet();
     }
 
     /// <summary>
@@ -115,7 +117,14 @@ public class Spreadsheet
     /// </returns>
     public object GetCellContents(string name)
     {
-        throw new NotImplementedException();
+        string value = cells.GetValueOrDefault(name).ToString();
+
+        if(value != null)
+        {
+            return value;
+        }
+
+        throw new InvalidNameException();
     }
 
     /// <summary>
@@ -147,7 +156,33 @@ public class Spreadsheet
 /// </returns>
 public IList<string> SetCellContents(string name, double number)
     {
-        throw new NotImplementedException();
+        List<string> affectedCells = new List<string>();
+        Stack<string> dependentVariables = new Stack<string>();
+
+        List<string> dependees = dependencies.GetDependees(name).ToList();
+
+        if (dependees.Count > 0)
+        {
+            foreach (string var in dependees)
+            {
+                dependentVariables.Push(var);
+            }
+        }
+
+        while(dependentVariables.Count > 0)
+        {
+            string currNode = dependentVariables.Pop();
+
+            foreach(string var in dependencies.GetDependees(currNode))
+            {
+                dependentVariables.Push(var);
+            }
+
+            affectedCells.Add(currNode);
+        }
+        
+
+        return affectedCells;
     }
 
     /// <summary>
@@ -189,7 +224,7 @@ public IList<string> SetCellContents(string name, string text)
 /// </returns>
 public IList<string> SetCellContents(string name, Formula formula)
     {
-        throw new NotImplementedException();
+        
     }
 
     /// <summary>
@@ -294,5 +329,19 @@ LinkedList<string> changed)
             }
         }
         changed.AddFirst(name);
+    }
+}
+
+
+
+internal class Cell
+{
+    object data;
+    string value;
+
+    public Cell (object storedData)
+    {
+        data = storedData;
+        value = "empty";
     }
 }

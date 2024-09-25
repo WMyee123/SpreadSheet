@@ -180,7 +180,6 @@ public IList<string> SetCellContents(string name, double number)
 
             affectedCells.Add(currNode);
         }
-        
 
         return affectedCells;
     }
@@ -199,7 +198,32 @@ public IList<string> SetCellContents(string name, double number)
 /// </returns>
 public IList<string> SetCellContents(string name, string text)
     {
-        throw new NotImplementedException();
+        List<string> affectedCells = new List<string>();
+        Stack<string> dependentVariables = new Stack<string>();
+
+        List<string> dependees = dependencies.GetDependees(name).ToList();
+
+        if (dependees.Count > 0)
+        {
+            foreach (string var in dependees)
+            {
+                dependentVariables.Push(var);
+            }
+        }
+
+        while (dependentVariables.Count > 0)
+        {
+            string currNode = dependentVariables.Pop();
+
+            foreach (string var in dependencies.GetDependees(currNode))
+            {
+                dependentVariables.Push(var);
+            }
+
+            affectedCells.Add(currNode);
+        }
+
+        return affectedCells;
     }
 
     /// <summary>
@@ -224,7 +248,32 @@ public IList<string> SetCellContents(string name, string text)
 /// </returns>
 public IList<string> SetCellContents(string name, Formula formula)
     {
-        
+        List<string> affectedCells = new List<string>();
+        Stack<string> dependentVariables = new Stack<string>();
+
+        List<string> dependees = dependencies.GetDependees(name).ToList();
+
+        if (dependees.Count > 0)
+        {
+            foreach (string var in dependees)
+            {
+                dependentVariables.Push(var);
+            }
+        }
+
+        while (dependentVariables.Count > 0)
+        {
+            string currNode = dependentVariables.Pop();
+
+            foreach (string var in dependencies.GetDependees(currNode))
+            {
+                dependentVariables.Push(var);
+            }
+
+            affectedCells.Add(currNode);
+        }
+
+        return affectedCells;
     }
 
     /// <summary>
@@ -248,7 +297,7 @@ public IList<string> SetCellContents(string name, Formula formula)
 /// </returns>
 private IEnumerable<string> GetDirectDependents(string name)
     {
-        throw new NotImplementedException();
+        return dependencies.GetDependents(name);
     }
 
     /// <summary>
@@ -313,8 +362,7 @@ private IEnumerable<string> GetCellsToRecalculate(string name)
 ///     A helper for the GetCellsToRecalculate method.
 /// FIXME: You should fully comment what is going on below using XML tags as appropriate.
 /// </summary>
-private void Visit(string start, string name, ISet<string> visited,
-LinkedList<string> changed)
+private void Visit(string start, string name, ISet<string> visited, LinkedList<string> changed)
     {
         visited.Add(name);
         foreach (string dependent in GetDirectDependents(name))
@@ -328,20 +376,33 @@ LinkedList<string> changed)
                 Visit(start, dependent, visited, changed);
             }
         }
+
         changed.AddFirst(name);
     }
 }
 
-
-
 internal class Cell
 {
-    object data;
-    string value;
+    private object data;
+    private string value;
 
-    public Cell (object storedData)
+    public Cell (double storedData)
     {
         data = storedData;
         value = "empty";
+    }
+
+
+    public Cell (string storedData)
+    {
+        data = storedData;
+        value = storedData;
+    }
+
+
+    public Cell (Formula storedData)
+    {
+        data = storedData;
+        value = data.ToString();
     }
 }

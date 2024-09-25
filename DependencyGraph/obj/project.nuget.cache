@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "1WcKBpW896s=",
+  "dgSpecHash": "CotbjQEixvI=",
   "success": true,
   "projectFilePath": "C:\\Users\\myers\\Downloads\\ps1\\DependencyGraph\\DependencyGraph.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\myers\\.nuget\\packages\\stylecop.analyzers\\1.1.118\\stylecop.analyzers.1.1.118.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -14,3 +14,5 @@ C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.dll
 C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\refint\Spreadsheet.dll
 C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\Spreadsheet.pdb
 C:\Users\myers\Downloads\ps1\Spreadsheet\obj\Debug\net8.0\ref\Spreadsheet.dll
+C:\Users\myers\Downloads\ps1\Spreadsheet\bin\Debug\net8.0\DependencyGraph.dll
+C:\Users\myers\Downloads\ps1\Spreadsheet\bin\Debug\net8.0\DependencyGraph.pdb

@@ -115,3 +115,5 @@ C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\refint\Spreadshee
 C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.pdb
 C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.genruntimeconfig.cache
 C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\ref\SpreadsheetTests.dll
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\DependencyGraph.dll
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\DependencyGraph.pdb

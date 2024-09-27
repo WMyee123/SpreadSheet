@@ -24,12 +24,32 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", 15));
-        Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", -15)); // Check for negative values
+        string[] tempArr = { "A1" };
+        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + 4")).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+
+        actualArr = testSheet.SetCellContents("A1", -4).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]); // Check for negative values
+        }
 
         // Check for multiple forms of decimal values being utilized in a cell
-        Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", 0.0423));
-        Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", 4.23E-2));
+        actualArr = testSheet.SetCellContents("A1", 0.0423).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+
+
+        actualArr = testSheet.SetCellContents("A1", 4.23e-2).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]); // Check for negative values
+        }
     }
 
 
@@ -46,7 +66,12 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", "Test String"));
+        string[] tempArr = { "A1" };
+        string[] actualArr = testSheet.SetCellContents("A1", "Test String").ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]); // Check for negative values
+        }
     }
 
 
@@ -60,7 +85,12 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", new Formula("17 + 4")));
+        string[] tempArr = { "A1" };
+        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + 4")).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
     }
 
 
@@ -87,7 +117,7 @@ public class SpreadsheetTests
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
-        tempArr = new string[] { "C1, B1, A1" };
+        tempArr = new string[] { "C1", "B1", "A1" };
         actualArr = testSheet.SetCellContents("C1", 15).ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
@@ -108,7 +138,13 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        Assert.AreEqual(["A1"], testSheet.SetCellContents("A1", new Formula("B1 + 4")));
+        string[] tempArr = { "A1" };
+        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + 4")).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+
         testSheet.SetCellContents("B1", new Formula("A1 * 2"));
     }
 

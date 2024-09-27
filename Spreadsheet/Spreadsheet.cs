@@ -169,6 +169,11 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, double number)
     {
+        if (!ValidCell(name))
+        {
+            throw new InvalidNameException();
+        }
+
         List<string> affectedCells = new List<string>();
         Stack<string> dependentVariables = new Stack<string>();
 
@@ -181,8 +186,6 @@ public class Spreadsheet
             cells.Remove(name);
             cells.Add(name, new Cell(number));
         }
-
-        affectedCells.Add(name);
 
         IEnumerable<string> cellsChanged = GetCellsToRecalculate(name);
         foreach (string currName in cellsChanged)
@@ -207,6 +210,11 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, string text)
     {
+        if (!ValidCell(name))
+        {
+            throw new InvalidNameException();
+        }
+
         List<string> affectedCells = new List<string>();
         Stack<string> dependentVariables = new Stack<string>();
 
@@ -219,8 +227,6 @@ public class Spreadsheet
             cells.Remove(name);
             cells.Add(name, new Cell(text));
         }
-
-        affectedCells.Add(name);
 
         IEnumerable<string> cellsChanged = GetCellsToRecalculate(name);
         foreach (string var in cellsChanged)
@@ -253,17 +259,34 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula)
     {
+        if (!ValidCell(name))
+        {
+            throw new InvalidNameException();
+        }
+
         List<string> affectedCells = new List<string>();
         Stack<string> dependentVariables = new Stack<string>();
 
         if (!cells.TryGetValue(name, out Cell cellVal))
         {
             cells.Add(name, new Cell(formula));
+
+            IEnumerable<string> dependentCells = formula.GetVariables();
+            foreach (string cell in dependentCells)
+            {
+                dependencies.AddDependency(name, cell);
+            }
         }
         else
         {
             cells.Remove(name);
             cells.Add(name, new Cell(formula));
+
+            IEnumerable<string> dependentCells = formula.GetVariables();
+            foreach (string cell in dependentCells)
+            {
+                dependencies.AddDependency(name, cell);
+            }
         }
 
         IEnumerable<string> cellsChanged = GetCellsToRecalculate(name);
@@ -296,7 +319,7 @@ public class Spreadsheet
     /// </returns>
     private IEnumerable<string> GetDirectDependents(string name)
     {
-        return dependencies.GetDependents(name);
+        return dependencies.GetDependees(name);
     }
 
     /// <summary>
@@ -378,6 +401,36 @@ public class Spreadsheet
 
         changed.AddFirst(name);
     }
+
+    private bool ValidCell(string name)
+    {
+        bool foundLetter = false;
+        for (int i = 0; i < name.Length; i++)
+        {
+            string currVal = name[i].ToString();
+            if (double.TryParse(currVal, out double d))
+            {
+                if (!foundLetter)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (char.IsLetter(currVal.ToCharArray()[0]))
+                {
+                    foundLetter = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        return foundLetter;
+    }
+
 
     internal class Cell
     {

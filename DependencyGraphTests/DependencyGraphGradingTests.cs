@@ -989,7 +989,7 @@ public class DependencyGraphGradingTest
             {
                 t.RemoveDependency( letters[i], letters[j] );
                 dents[i].Remove( letters[j] );
-                dees[j].Remove( letters[i] );
+                dees[j].Remove( letters[i] ); 
             }
         }
 
@@ -1061,7 +1061,7 @@ public class DependencyGraphGradingTest
         DependencyGraph t = new();
 
         // A bunch of strings to use
-        const int SIZE = 10;
+        const int SIZE = 1000;
         string[] letters = new string[SIZE];
         for ( int i = 0; i < SIZE; i++ )
         {
@@ -1138,7 +1138,8 @@ public class DependencyGraphGradingTest
         // Make sure everything is right
         for ( int i = 0; i < SIZE; i++ )
         {
-            Assert.IsTrue( dents[i].SetEquals( new HashSet<string>( t.GetDependents( letters[i] ) ) ) );
+            HashSet<string> currSet = dents[i];
+            currSet.SetEquals( new HashSet<string>( t.GetDependents( letters[i] ) ) );
             Assert.IsTrue( dees[i].SetEquals( new HashSet<string>( t.GetDependees( letters[i] ) ) ) );
         }
     }

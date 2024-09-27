@@ -387,6 +387,7 @@ public class Spreadsheet
     private bool ValidCell(string name)
     {
         bool foundLetter = false; // Determine if the first value found is a letter as that is required for a proper cell name
+        string prevLetter = string.Empty;
 
         // Look through each cell and determine what it is and if it follows the rules of a cell's naming convention
         for (int i = 0; i < name.Length; i++)
@@ -401,18 +402,25 @@ public class Spreadsheet
                     return false;
                 }
             }
+
             // If the current character is a letter, mark that a letter was visited
             else
             {
                 if (char.IsLetter(currVal.ToCharArray()[0]))
                 {
                     foundLetter = true;
+                    if (prevLetter != string.Empty && !char.IsLetter(prevLetter.ToCharArray()[0]))
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
                     return false;
                 }
             }
+
+            prevLetter = currVal;
         }
 
         return foundLetter; // Return whether the value is valid or not

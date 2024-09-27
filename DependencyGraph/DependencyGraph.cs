@@ -53,7 +53,7 @@ namespace CS3500.DependencyGraph;
 public class DependencyGraph
 {
     private Dictionary<string, List<string>> dependees;
-    private Dictionary<string, List<string>> dependents; 
+    private Dictionary<string, List<string>> dependents;
     private int size; // The number of pairs in the DependencyGraph
 
     /// <summary>
@@ -226,16 +226,13 @@ public class DependencyGraph
     /// <param name="newDependents"> The new dependents for nodeName. </param>
     public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents)
     {
-        List<string> tempDependents = new List<string>();
-
-        if (dependees.TryGetValue(nodeName, out List<string> dependentsList))
+        if (dependents.TryGetValue(nodeName, out List<string> dependentsList))
         {
-            tempDependents = dependentsList;
-        }
-
-        while (tempDependents.Count > 0)
-        {
-            RemoveDependency(nodeName, tempDependents[0]);
+            List<string> tempList = dependentsList;
+            while (tempList.Count > 0)
+            {
+                RemoveDependency(nodeName, tempList.Last());
+            }
         }
 
         foreach (string dependent in newDependents)
@@ -254,16 +251,13 @@ public class DependencyGraph
     /// <param name="newDependees"> The new dependees for nodeName. Could be empty.</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
     {
-        List<string> tempDependees = new List<string>();
-
-        if (dependents.TryGetValue(nodeName, out List<string> dependeesList))
+        if (dependees.TryGetValue(nodeName, out List<string> dependeesList))
         {
-            tempDependees = dependeesList;
-        }
-
-        while (tempDependees.Count > 0)
-        {
-            RemoveDependency(tempDependees[0], nodeName);
+            List<string> tempList = dependeesList;
+            while (tempList.Count > 0)
+            {
+                RemoveDependency(tempList.Last(), nodeName);
+            }
         }
 
         foreach (string dependee in newDependees)

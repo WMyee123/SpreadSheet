@@ -127,6 +127,7 @@ public class SpreadsheetTests
 
 
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_Formula_MultipleDependenciesInFormula()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -152,9 +153,11 @@ public class SpreadsheetTests
         }
     }
 
-
+    /// <summary>
+    ///     Test that when resetting a formula with dependencies to a value of a double, these dependencies are removed from the spreadsheet
+    /// </summary>
     [TestMethod]
-    public void Spreadsheet_TestSetCellContents_Formula_ResetFormula()
+    public void Spreadsheet_TestSetCellContents_Formula_ResetFormulaToDouble()
     {
         Spreadsheet testSheet = new Spreadsheet();
 
@@ -164,7 +167,6 @@ public class SpreadsheetTests
         testSheet.SetCellContents("A1", 15.7);
         Assert.AreEqual(15.7, testSheet.GetCellContents("A1"));
 
-        // Ensure that when replacing a value from a formula with dependencies to another value, those dependencies no longer exist
         string[] tempArr = new string[] { "B1" };
         string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
         for (int i = 0; i < actualArr.Length; i++)
@@ -173,6 +175,58 @@ public class SpreadsheetTests
         }
     }
 
+    /// <summary>
+    ///     Test that when resetting a formula with dependencies to a value of a string, these dependencies are removed from the spreadsheet
+    /// </summary>
+    [TestMethod]
+    public void Spreadsheet_TestSetCellContents_Formula_ResetFormulaToString()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("A1", new Formula("B1 + 5"));
+        Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
+
+        testSheet.SetCellContents("A1", "Test");
+        Assert.AreEqual("Test", testSheet.GetCellContents("A1"));
+
+        string[] tempArr = new string[] { "B1" };
+        string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
+        for (int i = 0; i < actualArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+    }
+
+
+    /// <summary>
+    ///     Test that when resetting a formula with dependencies to a value of a new formula, these dependencies are removed from the spreadsheet
+    /// </summary>
+    [TestMethod]
+    public void Spreadsheet_TestSetCellContents_Formula_ResetFormulaToFormula()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("A1", new Formula("B1 + 5"));
+        Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
+
+        testSheet.SetCellContents("A1", new Formula("C1 + 7"));
+        Assert.AreEqual(new Formula("C1 + 7"), testSheet.GetCellContents("A1"));
+
+        string[] tempArr = new string[] { "B1" };
+        string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
+        for (int i = 0; i < actualArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+
+        // Check that changing the new dependent cell affects A1 properly
+        tempArr = new string[] { "C1", "A1" };
+        actualArr = testSheet.SetCellContents("C1", 14).ToArray();
+        for (int i = 0; i < actualArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+    }
 
     /// <summary>
     ///     <para>
@@ -196,19 +250,64 @@ public class SpreadsheetTests
         testSheet.SetCellContents("B1", new Formula("A1 * 2"));
     }
 
+    [TestMethod]
+    [ExpectedException (typeof(InvalidNameException))]
+    public void Spreadsheet_TestInvalidName_NonLetterValue()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("/15", 5);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidNameException))]
+    public void Spreadsheet_TestInvalidName_LetterAfterNumber()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("A15A", 5);
+    }
 
     /// <summary>
     ///     <para>
-    ///         Ensure that when referencing a node that does not exist, an exception is thrown to address this error
+    ///         Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a string
     ///     </para>
     /// </summary>
     [TestMethod]
     [ExpectedException (typeof(InvalidNameException))]
-    public void Spreadsheet_TestSetCellContents_InvalidName()
+    public void Spreadsheet_TestSetCellContents_InvalidName_String()
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("17A", "null");
+        testSheet.SetCellContents("17A", "test");
+    }
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a number
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(InvalidNameException))]
+    public void Spreadsheet_TestSetCellContents_InvalidName_double()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("17A", 15.0);
+    }
+
+    /// <summary>
+    ///     <para>
+    ///         Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a formula
+    ///     </para>
+    /// </summary>
+    [TestMethod]
+    [ExpectedException(typeof(InvalidNameException))]
+    public void Spreadsheet_TestSetCellContents_InvalidName_Formula()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("17A", new Formula("5 + A1"));
     }
 
 
@@ -303,7 +402,6 @@ public class SpreadsheetTests
         }
     }
 
-
     /// <summary>
     ///     <para>
     ///         Ensure that when getting a cell's contents, an exception is thrown if the name of the cell is invalid 
@@ -348,5 +446,36 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();;
 
         Assert.AreEqual(string.Empty, testSheet.GetCellContents("A1"));
+    }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestStress_SetCellContents()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+        const int SIZE = 1000;
+        List<string> cellNames = new List<string>();
+
+        for (int i = 0; i <= SIZE; i++)
+        {
+            cellNames.Add($"A{i}");
+        }
+
+        for(int i  = 0; i < SIZE; i++)
+        {
+            for (int j = i + 1; j < SIZE; j++)
+            {
+                testSheet.SetCellContents(cellNames[i], new Formula($"{cellNames[j]} + {cellNames[j + 1]}"));
+            }
+        }
+
+        List<string> changedCells = testSheet.SetCellContents(cellNames[SIZE], 15).ToList();
+        cellNames.Reverse();
+        cellNames.Remove(cellNames[1]);
+        for (int i = 0; i < SIZE - 1; i++)
+        {
+            Assert.AreEqual(cellNames[i], changedCells[i]);
+        }
     }
 }

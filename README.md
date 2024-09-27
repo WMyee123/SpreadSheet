@@ -24,11 +24,13 @@ types when desired for the purpose of representing data in this manner. The prog
 the formula into a new hash code that represents a unique formula, with each formula having a different hashcode 
 relative to one another.
 
+On top of these two aspects, it can also hold information within cells, including formulas which can reference other cells 
+and manipulate the values held within them through a DependencyGraph.
 
 # Time Expenditures
 	Assignment 1: Time Expected - 15		Time Spent - 8
 	Assignment 2: Time Expected - 15		Time Spent - 12
 	Assignment 3: Time Expected - 16		Time Spent - 11
 	Assignment 4: Time Expected - 13		Time Spent - 17
-	Assignment 5: Time Expected - 12		Time Spent - 
+	Assignment 5: Time Expected - 12		Time Spent - 20
 ~~~

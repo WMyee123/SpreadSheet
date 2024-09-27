@@ -118,26 +118,17 @@ public class Spreadsheet
     /// </returns>
     public object GetCellContents(string name)
     {
+        if (!ValidCell(name))
+        {
+            throw new InvalidNameException();
+        }
 
         if (cells.TryGetValue(name, out Cell currCell))
         {
-            string contents = currCell.GetContents();
-
-            if (double.TryParse(contents, out double value))
-            {
-                return value;
-            }
-            else if (contents is Formula)
-            {
-                return new Formula(contents);
-            }
-            else
-            {
-                return contents;
-            }
+            return currCell.GetContents();
         }
 
-        throw new InvalidNameException();
+        return string.Empty;
     }
 
     /// <summary>
@@ -169,31 +160,31 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, double number)
     {
+        // Check that the cell that is being set has a valid name
         if (!ValidCell(name))
         {
             throw new InvalidNameException();
         }
 
-        List<string> affectedCells = new List<string>();
-        Stack<string> dependentVariables = new Stack<string>();
-
+        // If a cell is empty, set that sell to contain the provided number, otherwise remove the cell and
+        // add it back to the spreadsheet, resetting the contents of the cell in the process
         if (!cells.TryGetValue(name, out Cell cellVal))
         {
             cells.Add(name, new Cell(number));
         }
         else
         {
+            List<string> dependents = dependencies.GetDependents(name).ToList();
+            foreach (string dependentCell in dependents)
+            {
+                dependencies.RemoveDependency(name, dependentCell);
+            }
+
             cells.Remove(name);
             cells.Add(name, new Cell(number));
         }
 
-        IEnumerable<string> cellsChanged = GetCellsToRecalculate(name);
-        foreach (string currName in cellsChanged)
-        {
-            affectedCells.Add(currName);
-        }
-
-        return affectedCells;
+        return GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
     }
 
     /// <summary>
@@ -210,31 +201,31 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, string text)
     {
+        // Check that the cell that is being set has a valid name
         if (!ValidCell(name))
         {
             throw new InvalidNameException();
         }
 
-        List<string> affectedCells = new List<string>();
-        Stack<string> dependentVariables = new Stack<string>();
-
+        // If a cell is empty, set that sell to contain the provided string, otherwise remove the cell and
+        // add it back to the spreadsheet, resetting the contents of the cell in the process
         if (!cells.TryGetValue(name, out Cell cellVal))
         {
             cells.Add(name, new Cell(text));
         }
         else
         {
+            List<string> dependents = dependencies.GetDependents(name).ToList();
+            foreach (string dependentCell in dependents)
+            {
+                dependencies.RemoveDependency(name, dependentCell);
+            }
+
             cells.Remove(name);
             cells.Add(name, new Cell(text));
         }
 
-        IEnumerable<string> cellsChanged = GetCellsToRecalculate(name);
-        foreach (string var in cellsChanged)
-        {
-            affectedCells.Add(var);
-        }
-
-        return affectedCells;
+        return GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
     }
 
     /// <summary>
@@ -259,43 +250,28 @@ public class Spreadsheet
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula)
     {
+        // Check that the cell that is being set has a valid name
         if (!ValidCell(name))
         {
             throw new InvalidNameException();
         }
 
-        List<string> affectedCells = new List<string>();
-        Stack<string> dependentVariables = new Stack<string>();
-
+        // If a cell is empty, set that sell to contain the provided Formula, otherwise remove the cell and
+        // add it back to the spreadsheet, resetting the contents of the cell in the process
         if (!cells.TryGetValue(name, out Cell cellVal))
         {
             cells.Add(name, new Cell(formula));
-
-            IEnumerable<string> dependentCells = formula.GetVariables();
-            foreach (string cell in dependentCells)
-            {
-                dependencies.AddDependency(name, cell);
-            }
         }
         else
         {
             cells.Remove(name);
             cells.Add(name, new Cell(formula));
-
-            IEnumerable<string> dependentCells = formula.GetVariables();
-            foreach (string cell in dependentCells)
-            {
-                dependencies.AddDependency(name, cell);
-            }
         }
 
-        IEnumerable<string> cellsChanged = GetCellsToRecalculate(name);
-        foreach (string var in cellsChanged)
-        {
-            affectedCells.Add(var);
-        }
+        // Replace dependencies in the graph, using the variables present in the Formula provided to link these cells together
+        dependencies.ReplaceDependents(name, formula.GetVariables().ToList());
 
-        return affectedCells;
+        return GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
     }
 
     /// <summary>
@@ -382,13 +358,14 @@ public class Spreadsheet
 
     /// <summary>
     ///     A helper for the GetCellsToRecalculate method.
-    /// FIXME: You should fully comment what is going on below using XML tags as appropriate.
     /// </summary>
     private void Visit(string start, string name, ISet<string> visited, LinkedList<string> changed)
     {
-        visited.Add(name);
+        // Add each cell that can be visited, recursively looking at each dependent of the current cell
+        visited.Add(name); // Mark that the current node was visited
         foreach (string dependent in GetDirectDependents(name))
         {
+            // Unless the cell is the starting cell, continue searching through each dependent node until none are left
             if (dependent.Equals(start))
             {
                 throw new CircularException();
@@ -399,22 +376,32 @@ public class Spreadsheet
             }
         }
 
-        changed.AddFirst(name);
+        changed.AddFirst(name); // Add the most recently visited cell to the front of the list to allow for proper representation of the dependencies in the spreadsheet
     }
 
+    /// <summary>
+    ///     A helper method to determine if a given cell's name is valid for searching within the spreadsheet
+    /// </summary>
+    /// <param name="name"> The cell's given name to determine validity of </param>
+    /// <returns> A boolean statement stating if the given cell is valid for searching in the spreadsheet </returns>
     private bool ValidCell(string name)
     {
-        bool foundLetter = false;
+        bool foundLetter = false; // Determine if the first value found is a letter as that is required for a proper cell name
+
+        // Look through each cell and determine what it is and if it follows the rules of a cell's naming convention
         for (int i = 0; i < name.Length; i++)
         {
             string currVal = name[i].ToString();
-            if (double.TryParse(currVal, out double d))
+
+            // If the value is a number, determine that it came after a letter and if not, return false
+            if (double.TryParse(currVal, out double number))
             {
                 if (!foundLetter)
                 {
                     return false;
                 }
             }
+            // If the current character is a letter, mark that a letter was visited
             else
             {
                 if (char.IsLetter(currVal.ToCharArray()[0]))
@@ -428,30 +415,55 @@ public class Spreadsheet
             }
         }
 
-        return foundLetter;
+        return foundLetter; // Return whether the value is valid or not
     }
 
-
+    /// <summary>
+    ///     <para>
+    ///         A class to define a cell and the contents stored within it
+    ///     </para>
+    ///     <list type="number">
+    ///         <item>
+    ///             contents - The value stored within the cell for reference in the spreadsheet
+    ///         </item>
+    ///     </list>
+    /// </summary>
     internal class Cell
     {
-        private string contents;
+        private object contents; // A string representation of the values that can be stored in the cell
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Cell"/> class, containing a number represented as a double.
+        /// </summary>
+        /// <param name="data"> The number that is to be stored within the cell. </param>
         public Cell(double data)
         {
-            contents = data.ToString();
+            contents = data;
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Cell"/> class, containing a string of characters.
+        /// </summary>
+        /// <param name="data"> The string that is to be stored within the cell. </param>
         public Cell(string data)
         {
             contents = data;
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Cell"/> class, containing a formula for finding a value represented in this formula.
+        /// </summary>
+        /// <param name="data"> The formula that is to be stored within the cell. </param>
         public Cell(Formula data)
         {
-            contents = data.ToString();
+            contents = data;
         }
 
-        public string GetContents()
+        /// <summary>
+        ///     Get the contents that are stored within the cell, returning a string representation of these contents.
+        /// </summary>
+        /// <returns> A string representation of the contents within the cell for manipulation within the spreadsheet. </returns>
+        public object GetContents()
         {
             return contents;
         }

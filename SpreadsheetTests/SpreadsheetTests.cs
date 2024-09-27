@@ -126,6 +126,54 @@ public class SpreadsheetTests
     }
 
 
+    [TestMethod]
+    public void Spreadsheet_TestSetCellContents_Formula_MultipleDependenciesInFormula()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+        string[] tempArr = { "A1" };
+        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + C1")).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+
+        tempArr = new string[] { "B1", "A1" };
+        actualArr = testSheet.SetCellContents("B1", new Formula("C1 * 2")).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+
+        tempArr = new string[] { "C1", "B1", "A1" };
+        actualArr = testSheet.SetCellContents("C1", 15).ToArray();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+    }
+
+
+    [TestMethod]
+    public void Spreadsheet_TestSetCellContents_Formula_ResetFormula()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("A1", new Formula("B1 + 5"));
+        Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
+
+        testSheet.SetCellContents("A1", 15.7);
+        Assert.AreEqual(15.7, testSheet.GetCellContents("A1"));
+
+        // Ensure that when replacing a value from a formula with dependencies to another value, those dependencies no longer exist
+        string[] tempArr = new string[] { "B1" };
+        string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
+        for (int i = 0; i < actualArr.Length; i++)
+        {
+            Assert.AreEqual(tempArr[i], actualArr[i]);
+        }
+    }
+
+
     /// <summary>
     ///     <para>
     ///         Ensure that when having dependencies that rely on one another, an exception is thrown to address
@@ -269,5 +317,36 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();
 
         testSheet.GetCellContents("17A");
+    }
+
+
+    [TestMethod]
+    public void Spreadsheet_TestGetCellContents_StringThatIsFormula()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("A1", "1 + 2");
+
+        Assert.AreEqual("1 + 2", testSheet.GetCellContents("A1"));
+    }
+
+
+    [TestMethod]
+    public void Spreadsheet_TestGetCellContents_StringThatIsNumber()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetCellContents("A1", "1");
+
+        Assert.AreEqual("1", testSheet.GetCellContents("A1"));
+    }
+
+
+    [TestMethod]
+    public void Spreadsheet_TestGetCellContents_ValidNameEmptyCell()
+    {
+        Spreadsheet testSheet = new Spreadsheet();;
+
+        Assert.AreEqual(string.Empty, testSheet.GetCellContents("A1"));
     }
 }

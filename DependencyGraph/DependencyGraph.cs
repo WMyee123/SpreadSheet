@@ -85,7 +85,7 @@ public class DependencyGraph
     /// <returns> true if the node has dependents. </returns>
     public bool HasDependents(string nodeName)
     {
-        dependees.TryGetValue(nodeName, out List<string> dependentList);
+        dependents.TryGetValue(nodeName, out List<string> dependentList);
         if(dependentList != null)
             return dependentList.Count > 0;
 
@@ -100,7 +100,7 @@ public class DependencyGraph
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName)
     {
-        dependents.TryGetValue(nodeName, out List<string> dependeeList);
+        dependees.TryGetValue(nodeName, out List<string> dependeeList);
         if (dependeeList != null)
             return dependeeList.Count > 0;
 
@@ -117,7 +117,7 @@ public class DependencyGraph
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName)
     {
-        dependees.TryGetValue(nodeName, out List<string> dependentList);
+        dependents.TryGetValue(nodeName, out List<string> dependentList);
         if (dependentList != null)
             return dependentList;
 
@@ -134,7 +134,7 @@ public class DependencyGraph
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName)
     {
-        dependents.TryGetValue(nodeName, out List<string> dependeeList);
+        dependees.TryGetValue(nodeName, out List<string> dependeeList);
         if (dependeeList != null)
             return dependeeList;
 
@@ -154,36 +154,30 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until after the other node has been. </param>
     public void AddDependency(string dependee, string dependent)
     {
-        // Do nothing if the dependee and dependent are the same
-        if(dependee == dependent)
-        {
-            return;
-        }
-
         List<string> dependeeList = new List<string>();
         List<string> dependentList = new List<string>();
 
         // Determine if either node is present within the graph, adding them to it if not
-        if (!dependees.TryGetValue(dependee, out dependeeList))
+        if (!dependees.TryGetValue(dependent, out dependeeList))
         {
-            dependees.Add(dependee, new List<string>());
+            dependees.Add(dependent, new List<string>());
         }
-        if (!dependents.TryGetValue(dependent, out dependentList))
+        if (!dependents.TryGetValue(dependee, out dependentList))
         {
-            dependents.Add(dependent, new List<string>());
+            dependents.Add(dependee, new List<string>());
         }
 
-        dependeeList = dependees.GetValueOrDefault(dependee);
-        dependentList = dependents.GetValueOrDefault(dependent);
+        dependeeList = dependees.GetValueOrDefault(dependent);
+        dependentList = dependents.GetValueOrDefault(dependee);
 
-        if (dependeeList.Contains(dependent))
+        if (dependeeList.Contains(dependee))
         {
             return;
         }
 
         // add the dependents and dependees to either one in this process
-        dependeeList.Add(dependent);
-        dependentList.Add(dependee);
+        dependeeList.Add(dependee);
+        dependentList.Add(dependent);
         size++;
     }
 
@@ -200,20 +194,20 @@ public class DependencyGraph
         // Determine if both nodes are present within the graph, removing the dependency if so
         List<string> dependeeList = new List<string>();
         List<string> dependentList = new List<string>();
-        if (dependees.TryGetValue(dependee, out dependeeList) && dependents.TryGetValue(dependent, out dependentList))
+        if (dependees.TryGetValue(dependent, out dependeeList) && dependents.TryGetValue(dependee, out dependentList))
         {
-            dependeeList.Remove(dependent);
-            dependentList.Remove(dependee);
+            dependentList.Remove(dependent);
+            dependeeList.Remove(dependee);
             size--;
 
             if (dependentList.Count == 0)
             {
-                dependents.Remove(dependent);
+                dependents.Remove(dependee);
             }
 
             if (dependeeList.Count == 0)
             {
-                dependees.Remove(dependee);
+                dependees.Remove(dependent);
             }
         }
     }

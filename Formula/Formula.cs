@@ -203,6 +203,8 @@ public class Formula
         return variables;
     }
 
+    /// <returns> A canonical version (string) of the formula. All "equal" formulas
+    ///   should have the same value here. </returns>
     /// <summary>
     ///   <para>
     ///     Returns a string representation of a canonical form of the formula.
@@ -229,10 +231,6 @@ public class Formula
     ///     This code should execute in O(1) time.
     ///   <para>
     /// </summary>
-    /// <returns>
-    ///   A canonical version (string) of the formula. All "equal" formulas
-    ///   should have the same value here.
-    /// </returns>
     public override string ToString( )
     {
         return fullForm;
@@ -408,7 +406,10 @@ public class Formula
     /// <param name="f1"> The first of two formula objects. </param>
     /// <param name="f2"> The second of two formula objects. </param>
     /// <returns> true if the two formulas are the same.</returns>
-    public static bool operator ==(Formula f1, Formula f2) => f1.Equals(f2);
+    public static bool operator ==(Formula f1, Formula f2)
+    {
+        return f1.Equals(f2);
+    }
 
     /// <summary>
     ///   <para>

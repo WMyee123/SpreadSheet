@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteMeClass1.cs" company="UofU-CS3500">
+﻿// <copyright file="Spreadsheet.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // Written by Joe Zachary for CS 3500, September 2013
@@ -380,10 +380,10 @@ public class Spreadsheet
     }
 
     /// <summary>
-    ///     A helper method to determine if a given cell's name is valid for searching within the spreadsheet
+    ///     A helper method to determine if a given cell's name is valid for searching within the spreadsheet.
     /// </summary>
-    /// <param name="name"> The cell's given name to determine validity of </param>
-    /// <returns> A boolean statement stating if the given cell is valid for searching in the spreadsheet </returns>
+    /// <param name="name"> The cell's given name to determine validity of. </param>
+    /// <returns> A boolean statement stating if the given cell is valid for searching in the spreadsheet. </returns>
     private bool ValidCell(string name)
     {
         bool foundLetter = false; // Determine if the first value found is a letter as that is required for a proper cell name

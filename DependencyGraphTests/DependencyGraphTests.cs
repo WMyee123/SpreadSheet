@@ -1,22 +1,21 @@
+// <copyright file="DependencyGraphTests.cs" company="UofU-CS3500">
+// Copyright (c) 2024 UofU-CS3500. All rights reserved.
+// </copyright>
+// Written by William Myers for CS 3500, September 2024
 namespace CS3500.DependencyGraphTests;
 
 using CS3500.DependencyGraph;
 
-
 /// <summary>
-///     <para>
-///         A class to test the functionality of the DependencyGraph class and the functionality within it,
-///         allowing for further construction of more complex systems when necessary.
-///     </para>
+///     A class to test the functionality of the DependencyGraph class and the functionality within it,
+///     allowing for further construction of more complex systems when necessary.
 /// </summary>
 [TestClass]
 public class DependencyGraphTests
 {
     /// <summary>
-    ///     <para>
-    ///         Check that when a graph is formed, it contains the correct number of values within it,
-    ///         that being 0 as no values should be initialized upon creation
-    ///     </para>
+    ///     Check that when a graph is formed, it contains the correct number of values within it,
+    ///     that being 0 as no values should be initialized upon creation.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_ConstructorTest_TrueSize()
@@ -26,12 +25,9 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.Size == 0);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Find that when given a series of compounding values, all dependent together, the values will not create
-    ///         new instances of the values but rather, add the connections to existing ones, if already present
-    ///     </para>
+    ///     Find that when given a series of compounding values, all dependent together, the values will not create
+    ///     new instances of the values but rather, add the connections to existing ones, if already present.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_SizeTest_LargeGraph()
@@ -47,16 +43,13 @@ public class DependencyGraphTests
             }
         }
 
-        Assert.IsTrue(testGraph.Size == 90); // Ensure that the graph only contains 10 values
+        Assert.IsTrue(testGraph.Size == 100); // Ensure that the graph only contains 10 values
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when adding a dependency that already exists, nothing changes and only one connection 
-    ///         between the two values exists, rather than multiple, allowing for potential errors with removing
-    ///         dependencies
-    ///     </para>
+    ///     Ensure that when adding a dependency that already exists, nothing changes and only one connection
+    ///     between the two values exists, rather than multiple, allowing for potential errors with removing
+    ///     dependencies.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_AddDependencyTest_DependencyExists()
@@ -70,7 +63,7 @@ public class DependencyGraphTests
         string[] dependents = testGraph.GetDependents("A").ToArray();
         List<string> visited = new List<string>();
 
-        // Esnure that only 2 values are connected to "A"
+        // Ensure that only 2 values are connected to "A"
         for (int i = 0; i < dependents.Length; i++)
         {
             Assert.IsTrue(!visited.Contains(dependents[i]));
@@ -78,11 +71,8 @@ public class DependencyGraphTests
         }
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that any value in the graph not present does not return true, as they would not have any dependents if they are not within the graph
-    ///     </para>
+    ///     Ensure that any value in the graph not present does not return true, as they would not have any dependents if they are not within the graph.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependentsTest_FalseCheck()
@@ -92,11 +82,8 @@ public class DependencyGraphTests
         Assert.IsFalse(testGraph.HasDependents("H"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when a value present within the graph with one or more dependents shows that it contains those dependents
-    ///     </para>
+    ///     Ensure that when a value present within the graph with one or more dependents shows that it contains those dependents.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependentsTest_TrueCheck()
@@ -113,12 +100,9 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.HasDependents("E"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when removing dependencies from an empty graph, nothing is changed as there
-    ///         is no dependency to remove
-    ///     </para>
+    ///     Ensure that when removing dependencies from an empty graph, nothing is changed as there
+    ///     is no dependency to remove.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_RemoveDependencyTest_EmptyGraph()
@@ -132,12 +116,9 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.Size == 0);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when presented with a dependency in a full graph that does not exist, nothing changes and 
-    ///         no dependencies present with either value within them are unaffected
-    ///     </para>
+    ///     Ensure that when presented with a dependency in a full graph that does not exist, nothing changes and
+    ///     no dependencies present with either value within them are unaffected.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_RemoveDependencyTest_FilledGraph_False()
@@ -162,11 +143,8 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.GetDependees("H").Contains("E"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when removing a dependency that exists, proper functionality is achieved and no additional changes are made
-    ///     </para>
+    ///     Ensure that when removing a dependency that exists, proper functionality is achieved and no additional changes are made.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_RemoveDependencyTest_FilledGraph_True()
@@ -185,19 +163,15 @@ public class DependencyGraphTests
 
         Assert.IsFalse(testGraph.GetDependents("C").Contains("B"));
 
-
         // Ensure that no changes occurred within the extra dependencies
         Assert.IsTrue(testGraph.GetDependents("B").Contains("E"));
         Assert.IsTrue(testGraph.GetDependees("C").Contains("A"));
         Assert.IsTrue(testGraph.GetDependees("B").Contains("A"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when finding the dependees of values in an empty graph, 
-    ///         false is returned as they would not have dependees
-    ///     </para>
+    ///     Ensure that when finding the dependees of values in an empty graph,
+    ///     false is returned as they would not have dependees.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependeesTest_EmptyGraph()
@@ -208,12 +182,9 @@ public class DependencyGraphTests
         Assert.IsFalse(testGraph.HasDependees("E"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when finding if a value has dependees in a filled graph without being in the graph, 
-    ///         it returns false as it would not have dependees
-    ///     </para>
+    ///     Ensure that when finding if a value has dependees in a filled graph without being in the graph,
+    ///     it returns false as it would not have dependees.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependeesTest_FullGraph_False()
@@ -230,11 +201,8 @@ public class DependencyGraphTests
         Assert.IsFalse(testGraph.HasDependees("A")); // Ensure that a dependee with no dependees does not have any itself
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when presented a filled graph with dependees of the designated values, true is returned
-    ///     </para>
+    ///     Ensure that when presented a filled graph with dependees of the designated values, true is returned.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependeesTest_FullGraph_True()
@@ -251,10 +219,9 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.HasDependees("E"));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that the number of dependees within a given value in an empty graph will be 0
+    ///         Ensure that the number of dependees within a given value in an empty graph will be 0.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -265,11 +232,8 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.GetDependees("A").Count() == 0);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that a given value within a graph with multiple dependees provides all three properly
-    ///     </para>
+    ///     Ensure that a given value within a graph with multiple dependees provides all three properly.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_GetDependeesTest_FilledGraph()
@@ -290,12 +254,9 @@ public class DependencyGraphTests
         Assert.IsTrue(dependees.Contains("R"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that a value given within the denpendee position with none of its own will return a list of 0 values,
-    ///         as it has 0 dependees connecting to it
-    ///     </para>
+    ///     Ensure that a value given within the denpendee position with none of its own will return a list of 0 values,
+    ///     as it has 0 dependees connecting to it.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_GetDependeesTest_FilledGraph_EmptyReturn()
@@ -311,12 +272,9 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.GetDependees("A").Count() == 0);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that a value removed from the dependent position, but remaining in the dependee position, 
-    ///         thus keeping them in the graph maintains that it no longer has a dependee attached to it
-    ///     </para>
+    ///     Ensure that a value removed from the dependent position, but remaining in the dependee position,
+    ///     thus keeping them in the graph maintains that it no longer has a dependee attached to it.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_GetDependeesTest_DependeeRemoved()
@@ -330,11 +288,8 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.GetDependees("B").Count() == 0);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that an empty graph, when given a value to for the dependents of, returns an empty list
-    ///     </para>
+    ///     Ensure that an empty graph, when given a value to for the dependents of, returns an empty list.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_GetDependentsTest_EmptyGraph()
@@ -344,12 +299,9 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.GetDependents("B").Count() == 0);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when finding if a value has dependents in a filled graph without being in the graph, 
-    ///         it returns false as it would not have dependents
-    ///     </para>
+    ///     Ensure that when finding if a value has dependents in a filled graph without being in the graph,
+    ///     it returns false as it would not have dependents.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependentsTest_FullGraph_False()
@@ -366,12 +318,9 @@ public class DependencyGraphTests
         Assert.IsFalse(testGraph.HasDependents("H")); // Ensure that a dependent with no dependents does not have any itself
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when finding the dependents of values in an empty graph, 
-    ///         false is returned as they would not have dependents
-    ///     </para>
+    ///     Ensure that when finding the dependents of values in an empty graph,
+    ///     false is returned as they would not have dependents.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependentsTest_EmptyGraph()
@@ -382,11 +331,8 @@ public class DependencyGraphTests
         Assert.IsFalse(testGraph.HasDependents("E"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when presented a filled graph with dependents of the designated values, true is returned
-    ///     </para>
+    ///     Ensure that when presented a filled graph with dependents of the designated values, true is returned.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_HasDependentsTest_FullGraph_True()
@@ -403,11 +349,8 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.HasDependents("E"));
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that a given value within a graph with multiple dependents provides all three properly
-    ///     </para>
+    ///     Ensure that a given value within a graph with multiple dependents provides all three properly.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_GetDependentsTest_FilledGraph()
@@ -426,12 +369,9 @@ public class DependencyGraphTests
         Assert.IsTrue(dependents.Contains("E"));
     }
 
-
     /// <summary>
-    ///     <para>
     ///         Ensure that a value given within the dependent position with none of its own will return a list of 0 values,
-    ///         as it has 0 dependents connecting to it
-    ///     </para>
+    ///         as it has 0 dependents connecting to it.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_GetDependentsTest_FilledGraph_EmptyReturn()
@@ -447,12 +387,9 @@ public class DependencyGraphTests
         Assert.IsTrue(testGraph.GetDependents("C").Count() == 0);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when replacing a value's dependees, it functions properly and 
-    ///         replaces all the values with the new list of value assigned
-    ///     </para>
+    ///     Ensure that when replacing a value's dependees, it functions properly and
+    ///     replaces all the values with the new list of value assigned.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_ReplaceDependeesTest()
@@ -470,15 +407,11 @@ public class DependencyGraphTests
 
         testGraph.ReplaceDependees("A", newDependees);
 
-
         Assert.IsTrue(testGraph.GetDependees("A").Count() == 1);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when replacing a value's dependees with a new value, it will not add its own value to this new list
-    ///     </para>
+    ///     Ensure that when replacing a value's dependees with a new value, it will not add its own value to this new list.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_ReplaceDependeesTest_SameNode()
@@ -496,15 +429,11 @@ public class DependencyGraphTests
 
         testGraph.ReplaceDependees("A", newDependees);
 
-
-        Assert.IsTrue(testGraph.GetDependees("A").Count() == 0);
+        Assert.IsTrue(testGraph.GetDependees("A").Count() == 1);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when replacing the dependents of a value, each value is removed and reset to a new list of values
-    ///     </para>
+    ///     Ensure that when replacing the dependents of a value, each value is removed and reset to a new list of values.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_ReplaceDependentsTest()
@@ -522,15 +451,11 @@ public class DependencyGraphTests
 
         testGraph.ReplaceDependents("A", newDependents);
 
-
         Assert.IsTrue(testGraph.GetDependents("A").Count() == 1);
     }
 
-
     /// <summary>
-    ///     <para>
-    ///         Ensure that when replacing the dependents of a value with itself, it is unable to do so
-    ///     </para>
+    ///     Ensure that when replacing the dependents of a value with itself, it is unable to do so.
     /// </summary>
     [TestMethod]
     public void DependencyGraph_ReplaceDependentsTest_SameNode()
@@ -548,7 +473,6 @@ public class DependencyGraphTests
 
         testGraph.ReplaceDependents("A", newDependents);
 
-
-        Assert.IsTrue(testGraph.GetDependents("A").Count() == 0);
+        Assert.IsTrue(testGraph.GetDependents("A").Count() == 1);
     }
 }

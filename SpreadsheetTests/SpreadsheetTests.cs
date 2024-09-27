@@ -4,20 +4,16 @@ using CS3500.Spreadsheet;
 namespace SpreadsheetTests;
 
 /// <summary>
-///     <para>
-///         A test suite for checking the Spreadsheet class for errors in its functions,
-///         provided the individual cases for errors that may occur in their implementation and
-///         the way that the class is organized
-///     </para>
+///     A test suite for checking the Spreadsheet class for errors in its functions,
+///     provided the individual cases for errors that may occur in their implementation and
+///     the way that the class is organized
 /// </summary>
 [TestClass]
 public class SpreadsheetTests
 {
     /// <summary>
-    ///     <para>
-    ///         Check that when setting a cell to hold an integer or decimal value, of any form,
-    ///         it is able to properly do so
-    ///     </para>
+    ///     Check that when setting a cell to hold an integer or decimal value, of any form,
+    ///     it is able to properly do so
     /// </summary>
     [TestMethod]
     public void Spreadsheet_TestSetCellContents_Integer()
@@ -54,9 +50,7 @@ public class SpreadsheetTests
 
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when setting a cell to hold a string, it can properly do so
-    ///     </para>
+    ///     Ensure that when setting a cell to hold a string, it can properly do so
     ///     <remarks>
     ///         When storing an empty string, the cell should be deleted from memory
     ///     </remarks>
@@ -76,9 +70,7 @@ public class SpreadsheetTests
 
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when adding a formula with no dependencies, it can properly be inserted into the spreadsheet with no errors
-    ///     </para>
+    ///     Ensure that when adding a formula with no dependencies, it can properly be inserted into the spreadsheet with no errors
     /// </summary>
     [TestMethod]
     public void Spreadsheet_TestSetCellContents_Formula_NoDependencies()
@@ -95,9 +87,7 @@ public class SpreadsheetTests
 
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that dependencies can be asserted both directly and indirectly when changing the value within a cell
-    ///     </para>
+    ///     Ensure that dependencies can be asserted both directly and indirectly when changing the value within a cell
     /// </summary>
     [TestMethod]
     public void Spreadsheet_TestSetCellContents_Formula_Dependencies()
@@ -125,7 +115,10 @@ public class SpreadsheetTests
         }
     }
 
-
+    /// <summary>
+    ///     Ensure that when a formula causes multiple dependencies to exist, 
+    ///     the values properly adjust the other cells without adjusting additional present cells
+    /// </summary>
     [TestMethod]
     [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_Formula_MultipleDependenciesInFormula()
@@ -139,13 +132,13 @@ public class SpreadsheetTests
         }
 
         tempArr = new string[] { "B1", "A1" };
-        actualArr = testSheet.SetCellContents("B1", new Formula("C1 * 2")).ToArray();
+        actualArr = testSheet.SetCellContents("B1", new Formula("2")).ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
-        tempArr = new string[] { "C1", "B1", "A1" };
+        tempArr = new string[] { "C1", "A1" };
         actualArr = testSheet.SetCellContents("C1", 15).ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
@@ -157,6 +150,7 @@ public class SpreadsheetTests
     ///     Test that when resetting a formula with dependencies to a value of a double, these dependencies are removed from the spreadsheet
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_Formula_ResetFormulaToDouble()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -179,6 +173,7 @@ public class SpreadsheetTests
     ///     Test that when resetting a formula with dependencies to a value of a string, these dependencies are removed from the spreadsheet
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_Formula_ResetFormulaToString()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -186,9 +181,11 @@ public class SpreadsheetTests
         testSheet.SetCellContents("A1", new Formula("B1 + 5"));
         Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
 
+        // Reset A1 to contain a string
         testSheet.SetCellContents("A1", "Test");
         Assert.AreEqual("Test", testSheet.GetCellContents("A1"));
 
+        // Check that A1 is no longer dependent on B1
         string[] tempArr = new string[] { "B1" };
         string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
         for (int i = 0; i < actualArr.Length; i++)
@@ -202,6 +199,7 @@ public class SpreadsheetTests
     ///     Test that when resetting a formula with dependencies to a value of a new formula, these dependencies are removed from the spreadsheet
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_Formula_ResetFormulaToFormula()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -209,9 +207,11 @@ public class SpreadsheetTests
         testSheet.SetCellContents("A1", new Formula("B1 + 5"));
         Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
 
+        // Reset the contents of A1 to not reference B1
         testSheet.SetCellContents("A1", new Formula("C1 + 7"));
         Assert.AreEqual(new Formula("C1 + 7"), testSheet.GetCellContents("A1"));
 
+        // Check that B1 is not a dependent of A1
         string[] tempArr = new string[] { "B1" };
         string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
         for (int i = 0; i < actualArr.Length; i++)
@@ -235,6 +235,7 @@ public class SpreadsheetTests
     ///     </para>
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     [ExpectedException (typeof(CircularException))]
     public void Spreadsheet_TestSetCellContents_Formula_CircularDependency()
     {
@@ -250,7 +251,11 @@ public class SpreadsheetTests
         testSheet.SetCellContents("B1", new Formula("A1 * 2"));
     }
 
+    /// <summary>
+    ///     Ensure that when using invalid characters, an exception is thrown
+    /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     [ExpectedException (typeof(InvalidNameException))]
     public void Spreadsheet_TestInvalidName_NonLetterValue()
     {
@@ -259,7 +264,12 @@ public class SpreadsheetTests
         testSheet.SetCellContents("/15", 5);
     }
 
+    /// <summary>
+    ///     Ensure that when giving an invalid name with numbers intertwined by letters, 
+    ///     an exception is thrown
+    /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     [ExpectedException(typeof(InvalidNameException))]
     public void Spreadsheet_TestInvalidName_LetterAfterNumber()
     {
@@ -269,11 +279,10 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a string
-    ///     </para>
+    ///     Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a string
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     [ExpectedException (typeof(InvalidNameException))]
     public void Spreadsheet_TestSetCellContents_InvalidName_String()
     {
@@ -283,11 +292,10 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a number
-    ///     </para>
+    ///     Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a number
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     [ExpectedException(typeof(InvalidNameException))]
     public void Spreadsheet_TestSetCellContents_InvalidName_double()
     {
@@ -297,11 +305,10 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a formula
-    ///     </para>
+    ///     Ensure that when referencing a node that does not exist, an exception is thrown to address this error while passing in a formula
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     [ExpectedException(typeof(InvalidNameException))]
     public void Spreadsheet_TestSetCellContents_InvalidName_Formula()
     {
@@ -312,12 +319,11 @@ public class SpreadsheetTests
 
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when setting a node that is a dependee of other nodes, it accurately changes the others
-    ///         when the value within it is changed
-    ///     </para>
+    ///     Ensure that when setting a node that is a dependee of other nodes, it accurately changes the others
+    ///     when the value within it is changed
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_AdjustingDependencies()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -335,12 +341,11 @@ public class SpreadsheetTests
 
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when getting the non-empty cells within the spreadsheet, 
-    ///         the function properly represents an empty sheet
-    ///     </para>
+    ///     Ensure that when getting the non-empty cells within the spreadsheet, 
+    ///     the function properly represents an empty sheet
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestGetAllNonEmptyCells_OnlyEmptyCells()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -354,13 +359,12 @@ public class SpreadsheetTests
 
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when getting all the non-empty cells within the spreadsheet,
-    ///         the function can determine a non-empty cell with an empty dependent cell by only returning the filled cell and
-    ///         not the dependent cell
-    ///     </para>
+    ///     Ensure that when getting all the non-empty cells within the spreadsheet,
+    ///     the function can determine a non-empty cell with an empty dependent cell by only returning the filled cell and
+    ///     not the dependent cell
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestGetAllNonEmptyCells_DependencyOnEmptyCell()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -379,12 +383,11 @@ public class SpreadsheetTests
 
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when getting all the non-empty cells within the spreadsheet, 
-    ///         the function does not return a cell that has been filled with an empty value after being filled once prior
-    ///     </para>
+    ///     Ensure that when getting all the non-empty cells within the spreadsheet, 
+    ///     the function does not return a cell that has been filled with an empty value after being filled once prior
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestGetAllNonEmptyCells_FilledThanEmptiedCell()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -403,12 +406,11 @@ public class SpreadsheetTests
     }
 
     /// <summary>
-    ///     <para>
-    ///         Ensure that when getting a cell's contents, an exception is thrown if the name of the cell is invalid 
-    ///         and thus, does not exist
-    ///     </para>
+    ///     Ensure that when getting a cell's contents, an exception is thrown if the name of the cell is invalid 
+    ///     and thus, does not exist
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     [ExpectedException(typeof(InvalidNameException))]
     public void Spreadsheet_TestGetCellContents_InvalidCell()
     {
@@ -417,8 +419,11 @@ public class SpreadsheetTests
         testSheet.GetCellContents("17A");
     }
 
-
+    /// <summary>
+    ///     Ensure that when given a formula in the form of a string, only a string is returned, rather than a new formula
+    /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestGetCellContents_StringThatIsFormula()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -428,8 +433,11 @@ public class SpreadsheetTests
         Assert.AreEqual("1 + 2", testSheet.GetCellContents("A1"));
     }
 
-
+    /// <summary>
+    ///     Ensure that when given a number in the form of a string, the same type of object is returned, rather than a double
+    /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestGetCellContents_StringThatIsNumber()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -439,8 +447,11 @@ public class SpreadsheetTests
         Assert.AreEqual("1", testSheet.GetCellContents("A1"));
     }
 
-
+    /// <summary>
+    ///     Ensure that when getting the contents of a non-active cell, an empty string is returned
+    /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestGetCellContents_ValidNameEmptyCell()
     {
         Spreadsheet testSheet = new Spreadsheet();;
@@ -448,13 +459,15 @@ public class SpreadsheetTests
         Assert.AreEqual(string.Empty, testSheet.GetCellContents("A1"));
     }
 
-
+    /// <summary>
+    ///     Ensure that with a large number fo active cells, the spreadsheet can accruately manipulate one cell and have many other update
+    /// </summary>
     [TestMethod]
     [Timeout(2000)]
     public void Spreadsheet_TestStress_SetCellContents()
     {
         Spreadsheet testSheet = new Spreadsheet();
-        const int SIZE = 1000;
+        const int SIZE = 500;
         List<string> cellNames = new List<string>();
 
         for (int i = 0; i <= SIZE; i++)

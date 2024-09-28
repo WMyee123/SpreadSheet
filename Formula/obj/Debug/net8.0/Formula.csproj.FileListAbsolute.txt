@@ -10,3 +10,5 @@ C:\Users\myers\Downloads\ps1\Formula\obj\Debug\net8.0\refint\Formula.dll
 C:\Users\myers\Downloads\ps1\Formula\obj\Debug\net8.0\Formula.pdb
 C:\Users\myers\Downloads\ps1\Formula\obj\Debug\net8.0\ref\Formula.dll
 C:\Users\myers\Downloads\ps1\Formula\obj\Debug\net8.0\Formula.sourcelink.json
+C:\Users\myers\Downloads\ps1\Formula\bin\Debug\net8.0\Formula.xml
+C:\Users\myers\Downloads\ps1\Formula\obj\Debug\net8.0\Formula.xml

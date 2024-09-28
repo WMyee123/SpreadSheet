@@ -229,7 +229,7 @@ public class Formula
     ///   </code>
     ///   <para>
     ///     This code should execute in O(1) time.
-    ///   <para>
+    ///   </para>
     /// </summary>
     public override string ToString( )
     {
@@ -311,6 +311,9 @@ public class Formula
     /// </param>
     /// <param name="prevToken">
     ///     The token that determines the validity of the current token, allowing for proper understanding of the formula's requirements.
+    /// </param>
+    /// <param name="validVars">
+    ///     The variables that were determined to be valid and can be used in the formula.
     /// </param>
     /// <returns> A boolean statement as to if the tokens present in the formula are in a valid ordering between one another. </returns>
     private bool TokenRulesValid(string token, string prevToken, HashSet<string> validVars)

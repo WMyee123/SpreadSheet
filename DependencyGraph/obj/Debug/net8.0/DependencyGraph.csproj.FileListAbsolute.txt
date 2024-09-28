@@ -10,3 +10,5 @@ C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.dl
 C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\refint\DependencyGraph.dll
 C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.pdb
 C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\ref\DependencyGraph.dll
+C:\Users\myers\Downloads\ps1\DependencyGraph\bin\Debug\net8.0\DependencyGraph.xml
+C:\Users\myers\Downloads\ps1\DependencyGraph\obj\Debug\net8.0\DependencyGraph.xml

@@ -113,3 +113,6 @@ C:\Users\myers\Downloads\ps1\DependencyGraphTests\obj\Debug\net8.0\refint\Depend
 C:\Users\myers\Downloads\ps1\DependencyGraphTests\obj\Debug\net8.0\DependencyGraphTests.pdb
 C:\Users\myers\Downloads\ps1\DependencyGraphTests\obj\Debug\net8.0\DependencyGraphTests.genruntimeconfig.cache
 C:\Users\myers\Downloads\ps1\DependencyGraphTests\obj\Debug\net8.0\ref\DependencyGraphTests.dll
+C:\Users\myers\Downloads\ps1\DependencyGraphTests\bin\Debug\net8.0\DependencyGraphTests.xml
+C:\Users\myers\Downloads\ps1\DependencyGraphTests\bin\Debug\net8.0\DependencyGraph.xml
+C:\Users\myers\Downloads\ps1\DependencyGraphTests\obj\Debug\net8.0\DependencyGraphTests.xml

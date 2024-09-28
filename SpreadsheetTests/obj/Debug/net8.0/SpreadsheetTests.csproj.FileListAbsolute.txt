@@ -117,3 +117,8 @@ C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.
 C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\ref\SpreadsheetTests.dll
 C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\DependencyGraph.dll
 C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\DependencyGraph.pdb
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\SpreadsheetTests.xml
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\Formula.xml
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\Spreadsheet.xml
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\bin\Debug\net8.0\DependencyGraph.xml
+C:\Users\myers\Downloads\ps1\SpreadsheetTests\obj\Debug\net8.0\SpreadsheetTests.xml

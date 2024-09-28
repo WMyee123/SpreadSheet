@@ -113,3 +113,6 @@ C:\Users\myers\Downloads\ps1\FormulaTests\bin\Debug\net8.0\CoverletSourceRootsMa
 C:\Users\myers\Downloads\ps1\FormulaTests\bin\Debug\net8.0\NuGet.Frameworks.dll
 C:\Users\myers\Downloads\ps1\FormulaTests\bin\Debug\net8.0\Formula.pdb
 C:\Users\myers\Downloads\ps1\FormulaTests\obj\Debug\net8.0\FormulaTests.sourcelink.json
+C:\Users\myers\Downloads\ps1\FormulaTests\bin\Debug\net8.0\FormulaTests.xml
+C:\Users\myers\Downloads\ps1\FormulaTests\bin\Debug\net8.0\Formula.xml
+C:\Users\myers\Downloads\ps1\FormulaTests\obj\Debug\net8.0\FormulaTests.xml

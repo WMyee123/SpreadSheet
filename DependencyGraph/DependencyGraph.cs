@@ -1,4 +1,8 @@
-﻿using System.Xml.Linq;
+﻿// <copyright file="DependencyGraph.cs" company="UofU-CS3500">
+// Copyright (c) 2024 UofU-CS3500. All rights reserved.
+// </copyright>
+// <authors> William Myers </authors>
+// <date> 9/27/2024 </date>
 
 // Skeleton implementation written by Joe Zachary for CS 3500, September 2013.
 // Version 1.1 (Fixed error in comment for RemoveDependency.)
@@ -7,6 +11,8 @@
 // (Clarified meaning of dependent and dependee.)
 // (Clarified names in solution/project structure.)
 namespace CS3500.DependencyGraph;
+
+using System.Xml.Linq;
 
 /// <summary>
 ///     <para>
@@ -63,20 +69,18 @@ public class DependencyGraph
     public DependencyGraph()
     {
         // Initialize the list of nodes present in the graph
-        dependees = new Dictionary<string, List<string>>();
-        dependents = new Dictionary<string, List<string>>();
-        size = 0;
+        this.dependees = new Dictionary<string, List<string>>();
+        this.dependents = new Dictionary<string, List<string>>();
+        this.size = 0;
     }
 
-
     /// <summary>
-    ///     The number of ordered pairs in the DependencyGraph.
+    ///     Gets the number of ordered pairs in the DependencyGraph.
     /// </summary>
     public int Size
     {
-        get { return size; }
+        get { return this.size; }
     }
-
 
     /// <summary>
     ///     Reports whether the given node has dependents (i.e., other nodes depend on it).
@@ -85,13 +89,14 @@ public class DependencyGraph
     /// <returns> true if the node has dependents. </returns>
     public bool HasDependents(string nodeName)
     {
-        dependents.TryGetValue(nodeName, out List<string> dependentList);
-        if(dependentList != null)
+        this.dependents.TryGetValue(nodeName, out var dependentList);
+        if (dependentList != null)
+        {
             return dependentList.Count > 0;
+        }
 
         return false;
     }
-
 
     /// <summary>
     ///     Reports whether the given node has dependees (i.e., depends on one or more other nodes).
@@ -100,13 +105,14 @@ public class DependencyGraph
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName)
     {
-        dependees.TryGetValue(nodeName, out List<string> dependeeList);
+        this.dependees.TryGetValue(nodeName, out var dependeeList);
         if (dependeeList != null)
+        {
             return dependeeList.Count > 0;
+        }
 
         return false;
     }
-
 
     /// <summary>
     ///     <para>
@@ -117,13 +123,14 @@ public class DependencyGraph
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName)
     {
-        dependents.TryGetValue(nodeName, out List<string> dependentList);
+        this.dependents.TryGetValue(nodeName, out var dependentList);
         if (dependentList != null)
+        {
             return dependentList;
+        }
 
         return new List<string>();
     }
-
 
     /// <summary>
     ///     <para>
@@ -134,13 +141,14 @@ public class DependencyGraph
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName)
     {
-        dependees.TryGetValue(nodeName, out List<string> dependeeList);
+        this.dependees.TryGetValue(nodeName, out var dependeeList);
         if (dependeeList != null)
+        {
             return dependeeList;
+        }
 
         return new List<string>();
     }
-
 
     /// <summary>
     ///     <para>
@@ -154,21 +162,18 @@ public class DependencyGraph
     /// <param name="dependent"> The name of the node that cannot be evaluated until after the other node has been. </param>
     public void AddDependency(string dependee, string dependent)
     {
-        List<string> dependeeList = new List<string>();
-        List<string> dependentList = new List<string>();
-
         // Determine if either node is present within the graph, adding them to it if not
-        if (!dependees.TryGetValue(dependent, out dependeeList))
+        if (!this.dependees.TryGetValue(dependent, out var dependeeList))
         {
-            dependees.Add(dependent, new List<string>());
-        }
-        if (!dependents.TryGetValue(dependee, out dependentList))
-        {
-            dependents.Add(dependee, new List<string>());
+            dependeeList = new List<string>();
+            this.dependees.Add(dependent, dependeeList);
         }
 
-        dependeeList = dependees.GetValueOrDefault(dependent);
-        dependentList = dependents.GetValueOrDefault(dependee);
+        if (!this.dependents.TryGetValue(dependee, out var dependentList))
+        {
+            dependentList = new List<string>();
+            this.dependents.Add(dependee, dependentList);
+        }
 
         if (dependeeList.Contains(dependee))
         {
@@ -178,9 +183,8 @@ public class DependencyGraph
         // add the dependents and dependees to either one in this process
         dependeeList.Add(dependee);
         dependentList.Add(dependent);
-        size++;
+        this.size++;
     }
-
 
     /// <summary>
     ///     <para>
@@ -192,26 +196,23 @@ public class DependencyGraph
     public void RemoveDependency(string dependee, string dependent)
     {
         // Determine if both nodes are present within the graph, removing the dependency if so
-        List<string> dependeeList = new List<string>();
-        List<string> dependentList = new List<string>();
-        if (dependees.TryGetValue(dependent, out dependeeList) && dependents.TryGetValue(dependee, out dependentList))
+        if (this.dependees.TryGetValue(dependent, out var dependeeList) && this.dependents.TryGetValue(dependee, out var dependentList))
         {
             dependentList.Remove(dependent);
             dependeeList.Remove(dependee);
-            size--;
+            this.size--;
 
             if (dependentList.Count == 0)
             {
-                dependents.Remove(dependee);
+                this.dependents.Remove(dependee);
             }
 
             if (dependeeList.Count == 0)
             {
-                dependees.Remove(dependent);
+                this.dependees.Remove(dependent);
             }
         }
     }
-
 
     /// <summary>
     ///     Removes all existing ordered pairs of the form (nodeName, *). Then, for each t in newDependents, adds the ordered pair (nodeName, t).
@@ -220,21 +221,20 @@ public class DependencyGraph
     /// <param name="newDependents"> The new dependents for nodeName. </param>
     public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents)
     {
-        if (dependents.TryGetValue(nodeName, out List<string> dependentsList))
+        if (this.dependents.TryGetValue(nodeName, out var dependentsList))
         {
             List<string> tempList = dependentsList;
             while (tempList.Count > 0)
             {
-                RemoveDependency(nodeName, tempList.Last());
+                this.RemoveDependency(nodeName, tempList.Last());
             }
         }
 
         foreach (string dependent in newDependents)
         {
-            AddDependency(nodeName, dependent);
+            this.AddDependency(nodeName, dependent);
         }
     }
-
 
     /// <summary>
     ///     <para>
@@ -245,18 +245,18 @@ public class DependencyGraph
     /// <param name="newDependees"> The new dependees for nodeName. Could be empty.</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
     {
-        if (dependees.TryGetValue(nodeName, out List<string> dependeesList))
+        if (this.dependees.TryGetValue(nodeName, out var dependeesList))
         {
             List<string> tempList = dependeesList;
             while (tempList.Count > 0)
             {
-                RemoveDependency(tempList.Last(), nodeName);
+                this.RemoveDependency(tempList.Last(), nodeName);
             }
         }
 
         foreach (string dependee in newDependees)
         {
-            AddDependency(dependee, nodeName);
+            this.AddDependency(dependee, nodeName);
         }
     }
 }

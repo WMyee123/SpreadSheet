@@ -656,39 +656,39 @@ public class DependencyGraphGradingTest
     [TestCategory( "32" )]
     public void GetDependents_MultipleAddsRemoves_CanBeEnumeratedOver( )
     {
-        DependencyGraph t = new();
-        t.AddDependency( "x", "y" );
-        t.AddDependency( "a", "b" );
-        t.AddDependency( "a", "c" );
-        t.AddDependency( "a", "d" );
-        t.AddDependency( "c", "b" );
-        t.RemoveDependency( "a", "d" );
-        t.AddDependency( "e", "b" );
-        t.AddDependency( "b", "d" );
-        t.RemoveDependency( "e", "b" );
-        t.RemoveDependency( "x", "y" );
+        DependencyGraph t = new ();
+        t.AddDependency("x", "y");
+        t.AddDependency("a", "b");
+        t.AddDependency("a", "c");
+        t.AddDependency("a", "d");
+        t.AddDependency("c", "b");
+        t.RemoveDependency("a", "d");
+        t.AddDependency("e", "b");
+        t.AddDependency("b", "d");
+        t.RemoveDependency("e", "b");
+        t.RemoveDependency("x", "y");
 
         IEnumerator<string> e = t.GetDependents("a").GetEnumerator();
-        Assert.IsTrue( e.MoveNext() );
+        Assert.IsTrue( e.MoveNext());
 
         string s1 = e.Current;
-        Assert.IsTrue( e.MoveNext() );
+        Assert.IsTrue( e.MoveNext());
         string s2 = e.Current;
-        Assert.IsFalse( e.MoveNext() );
-        Assert.IsTrue( ( ( s1 == "b" ) && ( s2 == "c" ) ) || ( ( s1 == "c" ) && ( s2 == "b" ) ) );
+        Assert.IsFalse( e.MoveNext());
+        Assert.IsTrue(((s1 == "b") && (s2 == "c")) || ((s1 == "c") && (s2 == "b")));
 
-        e = t.GetDependents( "b" ).GetEnumerator();
-        Assert.IsTrue( e.MoveNext() );
-        Assert.AreEqual( "d", e.Current );
-        Assert.IsFalse( e.MoveNext() );
+        e = t.GetDependents("b").GetEnumerator();
+        Assert.IsTrue(e.MoveNext());
+        Assert.AreEqual("d", e.Current);
+        Assert.IsFalse(e.MoveNext());
 
-        e = t.GetDependents( "c" ).GetEnumerator();
-        Assert.IsTrue( e.MoveNext() );
-        Assert.AreEqual( "b", e.Current );
-        Assert.IsFalse( e.MoveNext() );
+        e = t.GetDependents("c").GetEnumerator();
+        Assert.IsTrue(e.MoveNext());
+        Assert.AreEqual("b", e.Current);
+        Assert.IsFalse(e.MoveNext());
 
-        e = t.GetDependents( "d" ).GetEnumerator();
-        Assert.IsFalse( e.MoveNext() );
+        e = t.GetDependents("d").GetEnumerator();
+        Assert.IsFalse(e.MoveNext());
     }
 
     /// <summary>
@@ -697,14 +697,14 @@ public class DependencyGraphGradingTest
     [TestMethod]
     [Timeout( 2000 )]
     [TestCategory( "33" )]
-    public void TestEmptyReplaceDependees( )
+    public void TestEmptyReplaceDependees()
     {
-        DependencyGraph dg = new();
+        DependencyGraph dg = new ();
 
-        dg.ReplaceDependees( "b", [ "a" ] );
+        dg.ReplaceDependees("b", [ "a" ]);
 
-        Assert.AreEqual( 1, dg.Size );
-        Assert.IsTrue( new HashSet<string> { "b" }.SetEquals( dg.GetDependents( "a" ) ) );
+        Assert.AreEqual(1, dg.Size);
+        Assert.IsTrue(new HashSet<string> { "b" }.SetEquals(dg.GetDependents("a")));
     }
 
     /// <summary>
@@ -713,40 +713,40 @@ public class DependencyGraphGradingTest
     ///    that previously had no values.
     /// </summary>
     [TestMethod]
-    [Timeout( 2000 )]
-    [TestCategory( "34" )]
-    public void ReplaceDependentsDependees_MultipleReplaces_FinalSizeFour( )
+    [Timeout(2000)]
+    [TestCategory("34")]
+    public void ReplaceDependentsDependees_MultipleReplaces_FinalSizeFour()
     {
-        DependencyGraph t = new();
-        t.AddDependency( "x", "b" );
-        t.AddDependency( "a", "z" );
-        t.ReplaceDependents( "b", [] );
-        t.AddDependency( "y", "b" );
-        t.ReplaceDependents( "a", ["c"] );
-        t.AddDependency( "w", "d" );
-        t.ReplaceDependees( "b", ["a", "c" ] );
-        t.ReplaceDependees( "d", [ "b"] );
-        Assert.AreEqual( 4, t.Size );
+        DependencyGraph t = new ();
+        t.AddDependency("x", "b");
+        t.AddDependency("a", "z");
+        t.ReplaceDependents("b", []);
+        t.AddDependency("y", "b");
+        t.ReplaceDependents("a", ["c"]);
+        t.AddDependency("w", "d");
+        t.ReplaceDependees("b", ["a", "c"]);
+        t.ReplaceDependees("d", ["b"]);
+        Assert.AreEqual(4, t.Size);
     }
 
     /// <summary>
     ///    Same as previous test, but check another element for the proper value.
     /// </summary>
     [TestMethod]
-    [Timeout( 2000 )]
-    [TestCategory( "35" )]
-    public void ReplaceDependentsDependees_MultipleReplacements_BHadTwo( )
+    [Timeout(2000)]
+    [TestCategory("35")]
+    public void ReplaceDependentsDependees_MultipleReplacements_BHadTwo()
     {
-        DependencyGraph t = new();
-        t.AddDependency( "x", "b" );
-        t.AddDependency( "a", "z" );
-        t.ReplaceDependents( "b", [] );
-        t.AddDependency( "y", "b" );
-        t.ReplaceDependents( "a", [ "c" ]);
-        t.AddDependency( "w", "d" );
-        t.ReplaceDependees( "b", [ "a", "c" ] );
-        t.ReplaceDependees( "d", [ "b" ]);
-        Assert.AreEqual( 2, t.GetDependees("b").Count() );
+        DependencyGraph t = new ();
+        t.AddDependency("x", "b");
+        t.AddDependency("a", "z");
+        t.ReplaceDependents( "b", []);
+        t.AddDependency("y", "b");
+        t.ReplaceDependents("a", ["c"]);
+        t.AddDependency("w", "d");
+        t.ReplaceDependees("b", ["a", "c"]);
+        t.ReplaceDependees("d", ["b"]);
+        Assert.AreEqual(2, t.GetDependees("b").Count());
     }
 
     /// <summary>
@@ -758,7 +758,7 @@ public class DependencyGraphGradingTest
     [TestCategory( "36" )]
     public void ReplaceAndHas_MultipleReplacements_AHasDependentsBHasBoth( )
     {
-        DependencyGraph t = new();
+        DependencyGraph t = new ();
         t.AddDependency( "x", "b" );
         t.AddDependency( "a", "z" );
         t.ReplaceDependents( "b", [] );

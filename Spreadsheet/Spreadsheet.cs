@@ -100,7 +100,7 @@ public class Spreadsheet
     /// </returns>
     public ISet<string> GetNamesOfAllNonemptyCells()
     {
-        return cells.Keys.ToHashSet();
+        return this.cells.Keys.ToHashSet();
     }
 
     /// <summary>
@@ -118,12 +118,12 @@ public class Spreadsheet
     /// </returns>
     public object GetCellContents(string name)
     {
-        if (!ValidCell(name))
+        if (!this.ValidCell(name))
         {
             throw new InvalidNameException();
         }
 
-        if (cells.TryGetValue(name, out Cell currCell))
+        if (this.cells.TryGetValue(name, out var currCell))
         {
             return currCell.GetContents();
         }
@@ -161,30 +161,30 @@ public class Spreadsheet
     public IList<string> SetCellContents(string name, double number)
     {
         // Check that the cell that is being set has a valid name
-        if (!ValidCell(name))
+        if (!this.ValidCell(name))
         {
             throw new InvalidNameException();
         }
 
         // If a cell is empty, set that sell to contain the provided number, otherwise remove the cell and
         // add it back to the spreadsheet, resetting the contents of the cell in the process
-        if (!cells.TryGetValue(name, out Cell cellVal))
+        if (!this.cells.TryGetValue(name, out var cellVal))
         {
-            cells.Add(name, new Cell(number));
+            this.cells.Add(name, new Cell(number));
         }
         else
         {
-            List<string> dependents = dependencies.GetDependents(name).ToList();
+            List<string> dependents = this.dependencies.GetDependents(name).ToList();
             foreach (string dependentCell in dependents)
             {
-                dependencies.RemoveDependency(name, dependentCell);
+                this.dependencies.RemoveDependency(name, dependentCell);
             }
 
-            cells.Remove(name);
-            cells.Add(name, new Cell(number));
+            this.cells.Remove(name);
+            this.cells.Add(name, new Cell(number));
         }
 
-        return GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
+        return this.GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
     }
 
     /// <summary>
@@ -202,30 +202,30 @@ public class Spreadsheet
     public IList<string> SetCellContents(string name, string text)
     {
         // Check that the cell that is being set has a valid name
-        if (!ValidCell(name))
+        if (!this.ValidCell(name))
         {
             throw new InvalidNameException();
         }
 
         // If a cell is empty, set that sell to contain the provided string, otherwise remove the cell and
         // add it back to the spreadsheet, resetting the contents of the cell in the process
-        if (!cells.TryGetValue(name, out Cell cellVal))
+        if (!this.cells.TryGetValue(name, out var cellVal))
         {
-            cells.Add(name, new Cell(text));
+            this.cells.Add(name, new Cell(text));
         }
         else
         {
-            List<string> dependents = dependencies.GetDependents(name).ToList();
+            List<string> dependents = this.dependencies.GetDependents(name).ToList();
             foreach (string dependentCell in dependents)
             {
-                dependencies.RemoveDependency(name, dependentCell);
+                this.dependencies.RemoveDependency(name, dependentCell);
             }
 
-            cells.Remove(name);
-            cells.Add(name, new Cell(text));
+            this.cells.Remove(name);
+            this.cells.Add(name, new Cell(text));
         }
 
-        return GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
+        return this.GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
     }
 
     /// <summary>
@@ -251,27 +251,27 @@ public class Spreadsheet
     public IList<string> SetCellContents(string name, Formula formula)
     {
         // Check that the cell that is being set has a valid name
-        if (!ValidCell(name))
+        if (!this.ValidCell(name))
         {
             throw new InvalidNameException();
         }
 
         // If a cell is empty, set that sell to contain the provided Formula, otherwise remove the cell and
         // add it back to the spreadsheet, resetting the contents of the cell in the process
-        if (!cells.TryGetValue(name, out Cell cellVal))
+        if (!this.cells.TryGetValue(name, out var cellVal))
         {
-            cells.Add(name, new Cell(formula));
+            this.cells.Add(name, new Cell(formula));
         }
         else
         {
-            cells.Remove(name);
-            cells.Add(name, new Cell(formula));
+            this.cells.Remove(name);
+            this.cells.Add(name, new Cell(formula));
         }
 
         // Replace dependencies in the graph, using the variables present in the Formula provided to link these cells together
-        dependencies.ReplaceDependents(name, formula.GetVariables().ToList());
+        this.dependencies.ReplaceDependents(name, formula.GetVariables().ToList());
 
-        return GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
+        return this.GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
     }
 
     /// <summary>
@@ -295,7 +295,7 @@ public class Spreadsheet
     /// </returns>
     private IEnumerable<string> GetDirectDependents(string name)
     {
-        return dependencies.GetDependees(name);
+        return this.dependencies.GetDependees(name);
     }
 
     /// <summary>
@@ -350,9 +350,9 @@ public class Spreadsheet
     /// </returns>
     private IEnumerable<string> GetCellsToRecalculate(string name)
     {
-        LinkedList<string> changed = new();
-        HashSet<string> visited = [];
-        Visit(name, name, visited, changed);
+        LinkedList<string> changed = new ();
+        HashSet<string> visited = new HashSet<string>();
+        this.Visit(name, name, visited, changed);
         return changed;
     }
 
@@ -363,7 +363,7 @@ public class Spreadsheet
     {
         // Add each cell that can be visited, recursively looking at each dependent of the current cell
         visited.Add(name); // Mark that the current node was visited
-        foreach (string dependent in GetDirectDependents(name))
+        foreach (string dependent in this.GetDirectDependents(name))
         {
             // Unless the cell is the starting cell, continue searching through each dependent node until none are left
             if (dependent.Equals(start))
@@ -372,7 +372,7 @@ public class Spreadsheet
             }
             else if (!visited.Contains(dependent))
             {
-                Visit(start, dependent, visited, changed);
+                this.Visit(start, dependent, visited, changed);
             }
         }
 
@@ -428,7 +428,7 @@ public class Spreadsheet
 
     /// <summary>
     ///     <para>
-    ///         A class to define a cell and the contents stored within it
+    ///         A class to define a cell and the contents stored within it.
     ///     </para>
     ///     <list type="number">
     ///         <item>
@@ -446,7 +446,7 @@ public class Spreadsheet
         /// <param name="data"> The number that is to be stored within the cell. </param>
         public Cell(double data)
         {
-            contents = data;
+            this.contents = data;
         }
 
         /// <summary>
@@ -455,7 +455,7 @@ public class Spreadsheet
         /// <param name="data"> The string that is to be stored within the cell. </param>
         public Cell(string data)
         {
-            contents = data;
+            this.contents = data;
         }
 
         /// <summary>
@@ -464,7 +464,7 @@ public class Spreadsheet
         /// <param name="data"> The formula that is to be stored within the cell. </param>
         public Cell(Formula data)
         {
-            contents = data;
+            this.contents = data;
         }
 
         /// <summary>
@@ -473,7 +473,7 @@ public class Spreadsheet
         /// <returns> A string representation of the contents within the cell for manipulation within the spreadsheet. </returns>
         public object GetContents()
         {
-            return contents;
+            return this.contents;
         }
     }
 }

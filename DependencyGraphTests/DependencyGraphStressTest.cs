@@ -1,8 +1,15 @@
-﻿namespace CS3500.DevelopmentTests;
+﻿// <copyright file="DependencyGraphStressTest.cs" company="UofU-CS3500">
+//   Copyright (c) 2024 UofU-CS3500. All rights reserved.
+// </copyright>
+// <authors> William Myers </authors>
+// <date> 9/13/2024 </date>
+
+namespace CS3500.DevelopmentTests;
 using CS3500.DependencyGraph;
+
 /// <summary>
 /// This is a test class for DependencyGraphTest and is intended
-/// to contain all DependencyGraphTest Unit Tests
+/// to contain all DependencyGraphTest Unit Tests.
 /// </summary>
 [TestClass]
 public class DependencyGraphExampleStressTests
@@ -15,7 +22,8 @@ public class DependencyGraphExampleStressTests
     [Timeout(2000)] // 2 second run time limit <-- remove this comment
     public void StressTest()
     {
-        DependencyGraph dg = new();
+        DependencyGraph dg = new ();
+
         // A bunch of strings to use
         const int SIZE = 200;
         string[] letters = new string[SIZE];
@@ -23,6 +31,7 @@ public class DependencyGraphExampleStressTests
         {
             letters[i] = string.Empty + ((char)('a' + i));
         }
+
         // The correct answers
         HashSet<string>[] dependents = new HashSet<string>[SIZE];
         HashSet<string>[] dependees = new HashSet<string>[SIZE];
@@ -31,6 +40,7 @@ public class DependencyGraphExampleStressTests
             dependents[i] = [];
             dependees[i] = [];
         }
+
         // Add a bunch of dependencies
         for (int i = 0; i < SIZE; i++)
         {
@@ -41,6 +51,7 @@ public class DependencyGraphExampleStressTests
                 dependees[j].Add(letters[i]);
             }
         }
+
         // Remove a bunch of dependencies
         for (int i = 0; i < SIZE; i++)
         {
@@ -51,6 +62,7 @@ public class DependencyGraphExampleStressTests
                 dependees[j].Remove(letters[i]);
             }
         }
+
         // Add some back
         for (int i = 0; i < SIZE; i++)
         {
@@ -61,6 +73,7 @@ public class DependencyGraphExampleStressTests
                 dependees[j].Add(letters[i]);
             }
         }
+
         // Remove some more
         for (int i = 0; i < SIZE; i += 2)
         {
@@ -71,6 +84,7 @@ public class DependencyGraphExampleStressTests
                 dependees[j].Remove(letters[i]);
             }
         }
+
         // Make sure everything is right
         for (int i = 0; i < SIZE; i++)
         {

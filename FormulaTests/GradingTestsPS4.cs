@@ -684,10 +684,10 @@ public class GradingTestsPS4
     [TestCategory( "50" )]
     public void FormulaToString_CreatesEqualFormula_EqualEachOther( )
     {
-        Formula f1 = new( "(1+2*(3/4))" );
-        Formula f2 = new( f1.ToString( ) );
+        Formula f1 = new ("(1+2*(3/4))");
+        Formula f2 = new (f1.ToString());
 
-        Assert.AreEqual( f1.Evaluate( s => 0 ), f2.Evaluate( s => 0 ) );
-        Assert.AreEqual( f1.ToString(), f2.ToString( ) );
+        Assert.AreEqual( f1.Evaluate( s => 0 ), f2.Evaluate( s => 0 ));
+        Assert.AreEqual( f1.ToString(), f2.ToString());
     }
 }

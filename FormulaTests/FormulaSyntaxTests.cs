@@ -1,5 +1,5 @@
 // <copyright file="FormulaSyntaxTests.cs" company="UofU-CS3500">
-//   Copyright © 2024 UofU-CS3500. All rights reserved.
+//   Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 // <authors> William Myers </authors>
 // <date> 9/10/2024 </date>
@@ -70,16 +70,14 @@ public class FormulaSyntaxTests
     [ExpectedException(typeof(FormulaFormatException))]
     public void FormulaConstructor_TestNoTokens_Invalid()
     {
-        _ = new Formula("");  // note: it is arguable that you should replace "" with string.Empty for readability and clarity of intent (e.g., not a cut and paste error or a "I forgot to put something there" error).
+        _ = new Formula(string.Empty);  // note: it is arguable that you should replace "" with string.Empty for readability and clarity of intent (e.g., not a cut and paste error or a "I forgot to put something there" error).
     }
-
-
 
     // --- Tests for Valid Token Rule ---
 
     /// <summary>
     ///     <para>
-    ///         This test ensures that with a combination of tokens that are valid, 
+    ///         This test ensures that with a combination of tokens that are valid,
     ///         it will function properly.
     ///     </para>
     ///     <code>
@@ -95,7 +93,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
-    ///         This test ensures that, given a series of invalid tokens, 
+    ///         This test ensures that, given a series of invalid tokens,
     ///         the program does not function as intended.
     ///     </para>
     ///     <code>
@@ -109,8 +107,6 @@ public class FormulaSyntaxTests
     {
         _ = new Formula("? = }");
     }
-
-
 
     // --- Tests for Closing Parenthesis Rule
 
@@ -130,8 +126,6 @@ public class FormulaSyntaxTests
     {
         _ = new Formula("((1)))"); // The one in this test is to ensure the test does not break the first token rule
     }
-
-
 
     // --- Tests for Balanced Parentheses Rule
 
@@ -154,7 +148,7 @@ public class FormulaSyntaxTests
 
     /// <summary>
     ///     <para>
-    ///         This test ensures that when provided proper closing parenthesis, 
+    ///         This test ensures that when provided proper closing parenthesis,
     ///         the intended functionality is found to be true.
     ///     </para>
     ///     <code>
@@ -167,8 +161,6 @@ public class FormulaSyntaxTests
     {
         _ = new Formula("(5)");
     }
-
-
 
     // --- Tests for First Token Rule
 
@@ -264,13 +256,11 @@ public class FormulaSyntaxTests
         _ = new Formula("x1");
     }
 
-
-
     // --- Tests for Parentheses/Operator Following Rule ---
 
     /// <summary>
     ///     <para>
-    ///         This test ensures that any token following a parenthesis or operator is a number or vairable, 
+    ///         This test ensures that any token following a parenthesis or operator is a number or vairable,
     ///         allowing for proper reading of the formula.
     ///     </para>
     ///     <code>
@@ -307,8 +297,6 @@ public class FormulaSyntaxTests
         _ = new Formula("((z1))");
         _ = new Formula("(1 + (2))");
     }
-
-
 
     // --- Tests for Extra Following Rule ---
 
@@ -351,10 +339,9 @@ public class FormulaSyntaxTests
         _ = new Formula("7 / x1");
     }
 
-
     /// <summary>
     ///     <para>
-    ///         This test esnures that when provided a valid formula, the ToString function works appropriately
+    ///         This test esnures that when provided a valid formula, the ToString function works appropriately.
     ///     </para>
     ///     <code>
     ///         Code Within Test:
@@ -369,14 +356,12 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("x1  +     z1").ToString() == "X1+Z1"); // This test ensures that extra spaces are not represented in the ToString Function
     }
 
-
     // FURTHER TESTS MADE FOR ASSIGNMENT 4
-
 
     /// <summary>
     ///     <para>
-    ///         Ensure that when given different integers within a formula, the == syntax will return false, 
-    ///         or true if they are the same integers
+    ///         Ensure that when given different integers within a formula, the == syntax will return false,
+    ///         or true if they are the same integers.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -386,10 +371,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("1 + 2") == new Formula("1 + 5")); // Check for in the case the two formulas are not equal
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given doubles or floats, the == syntax can still find proper equality between formulas
+    ///         Ensure that when given doubles or floats, the == syntax can still find proper equality between formulas.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -402,10 +386,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("1 + 5E-1") == new Formula("1 + 1.5E-1"));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given parenthesis, a formula can properly be found to be equivalent using the == syntax
+    ///         Ensure that when given parenthesis, a formula can properly be found to be equivalent using the == syntax.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -416,10 +399,9 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("(5)") == new Formula("(5)")); // Check for when only a signle value is present in the parenthesis
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given different variables, the == syntax will return false, or true if they are the same
+    ///         Ensure that when given different variables, the == syntax will return false, or true if they are the same.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -429,10 +411,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("x1 + x2") == new Formula("y1 + y2")); // Check for in the case the two formulas are not equal
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given different signs between formulas, the == syntax will return false if different and true when the same
+    ///         Ensure that when given different signs between formulas, the == syntax will return false if different and true when the same.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -445,11 +426,10 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("x1 / x2") == new Formula("x1 * x2")); // Check that a combination of signs returns false
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that, using the == syntax, two series of formulas that are different combinations of 
-    ///         one another will not be found to be equal unless they are exactly the same
+    ///         Ensure that, using the == syntax, two series of formulas that are different combinations of
+    ///         one another will not be found to be equal unless they are exactly the same.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -460,11 +440,10 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("x1 - x2") == new Formula("x1 + x2")); // Check that the sign does not impact the result
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when two formulas, using the Equals function, have different integers involved, 
-    ///         will be found to be different formulas
+    ///         Ensure that when two formulas, using the Equals function, have different integers involved,
+    ///         will be found to be different formulas.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -474,10 +453,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("1 + 2").Equals(new Formula("1 + 5"))); // Check for in the case the two formulas are not equal
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given doubles or floats, the Equals function can still find proper equality between formulas
+    ///         Ensure that when given doubles or floats, the Equals function can still find proper equality between formulas.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -490,10 +468,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("1 + 5E-1").Equals(new Formula("1 + 1.5E-1")));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given parenthesis, a formula can properly be found to be equivalent using the Equals function
+    ///         Ensure that when given parenthesis, a formula can properly be found to be equivalent using the Equals function.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -504,11 +481,10 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("(5)").Equals(new Formula("(5)"))); // Check for when only a signle value is present in the parenthesis
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when using the Equals function, it can find that two values with 
-    ///         the same and different variables are equal or not, respectively
+    ///         Ensure that when using the Equals function, it can find that two values with
+    ///         the same and different variables are equal or not, respectively.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -518,11 +494,10 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("x1 + x2").Equals(new Formula("y1 + y2"))); // Check for in the case the two formulas are not equal
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when using the Equals function, it can find that two formulas with the same signs, 
-    ///         with differences between each sign test, are equivalent to one another
+    ///         Ensure that when using the Equals function, it can find that two formulas with the same signs,
+    ///         with differences between each sign test, are equivalent to one another.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -535,11 +510,10 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("x1 / x2").Equals(new Formula("x1 * x2"))); // Check that a combination of signs returns false
     }
 
-
     /// <summary>
     ///     <para>
     ///         Ensure that given the Equals function, evaluation finds combinations of values to not be equal,
-    ///         with two formulas that are the same being equivalent
+    ///         with two formulas that are the same being equivalent.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -550,10 +524,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("x1 - x2").Equals(new Formula("x1 + x2"))); // Check that the sign does not impact the result
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Test for when the Equals method is used to equate a formula with something that is not of that type
+    ///         Test for when the Equals method is used to equate a formula with something that is not of that type.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -562,10 +535,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("1 + x2").Equals(42));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when two formulas with different integers are compared, they are found to not be equal
+    ///         Ensure that when two formulas with different integers are compared, they are found to not be equal.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -575,10 +547,9 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("1 + 2") != new Formula("1 + 7")); // Ensure the correct result is sent when a false equality is found
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given doubles or floats, the != syntax can still find proper inequality between formulas
+    ///         Ensure that when given doubles or floats, the != syntax can still find proper inequality between formulas.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -591,10 +562,9 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("1 + 5E-1") != new Formula("1 + 1.5E-1"));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given parenthesis, a formula can properly be found to be not equivalent using the != syntax
+    ///         Ensure that when given parenthesis, a formula can properly be found to be not equivalent using the != syntax.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -605,10 +575,9 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("(5)") != new Formula("(5)")); // Check for when only a signle value is present in the parenthesis
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that two formulas with different variables will not be read as equal to one another
+    ///         Ensure that two formulas with different variables will not be read as equal to one another.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -618,10 +587,9 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("x1 + x2") != new Formula("x1 + x7")); // Ensure the correct result is sent when a false equality is found
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that the signs being different determines that the formulas are different from one another
+    ///         Ensure that the signs being different determines that the formulas are different from one another.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -634,11 +602,10 @@ public class FormulaSyntaxTests
         Assert.IsFalse(new Formula("1 * 2") != new Formula("1 * 2")); // Ensure that when an equality is found, false is returned for sign changes
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given a combination of signs, variables, and integers in a series of formulas, 
-    ///         each one is properly found to not equal one another
+    ///         Ensure that when given a combination of signs, variables, and integers in a series of formulas,
+    ///         each one is properly found to not equal one another.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -649,10 +616,9 @@ public class FormulaSyntaxTests
         Assert.IsTrue(new Formula("1 + 2") != new Formula("1 * x2"));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that given a valid formula, a value is returned properly from evaluation
+    ///         Ensure that given a valid formula, a value is returned properly from evaluation.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -662,14 +628,13 @@ public class FormulaSyntaxTests
         Assert.AreEqual(21.0, testFormula.Evaluate(x1 => 5));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when provided zero variables, the formula can still properly being evaluated
+    ///         Ensure that when provided zero variables, the formula can still properly being evaluated.
     ///     </para>
     ///     <note>
-    ///         A lambda expression is still used when calling the evaluation function, 
-    ///         due to the requirements of said function
+    ///         A lambda expression is still used when calling the evaluation function,
+    ///         due to the requirements of said function.
     ///     </note>
     /// </summary>
     [TestMethod]
@@ -679,10 +644,9 @@ public class FormulaSyntaxTests
         Assert.AreEqual(15.0, testFormula.Evaluate(x1 => 5));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that an error is returned when dividing by a variable representing 0
+    ///         Ensure that an error is returned when dividing by a variable representing 0.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -692,32 +656,33 @@ public class FormulaSyntaxTests
         Assert.IsTrue(testFormula.Evaluate(x1 => 0) is FormulaError);
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when a variable is undefined, an error is returned to the user
+    ///         Ensure that when a variable is undefined, an error is returned to the user.
     ///     </para>
     /// </summary>
     [TestMethod]
     public void Formula_TestEvaluate_NoVariableDefinition()
     {
         Formula testFormula = new Formula("x2 + 16");
-        double myVars(string s)
+        double MyVars(string s)
         {
             if (s == "X1")
+            {
                 return 5;
+            }
             else
+            {
                 throw new ArgumentException("I don't know that variable");
-        };
+            }
+        }
 
-        Assert.IsTrue(testFormula.Evaluate(myVars) is FormulaError);
-
+        Assert.IsTrue(testFormula.Evaluate(MyVars) is FormulaError);
     }
-
 
     /// <summary>
     ///     <para>
-    ///         Ensure that given multiple vairables, the formula can still be evaluated properly
+    ///         Ensure that given multiple vairables, the formula can still be evaluated properly.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -727,10 +692,9 @@ public class FormulaSyntaxTests
         Assert.AreEqual(10.0, testFormula.Evaluate((name) => 5));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given a complicated formula, it can properly find it, even with a variable provided
+    ///         Ensure that when given a complicated formula, it can properly find it, even with a variable provided.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -740,62 +704,74 @@ public class FormulaSyntaxTests
         Assert.AreEqual(32.0, testFormula.Evaluate(x1 => 5));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Check that variables can properly be divided and multiplied with, getting the correct value once complete
+    ///         Check that variables can properly be divided and multiplied with, getting the correct value once complete.
     ///     </para>
     /// </summary>
-    /// <exception cref="ArgumentException"> Throw an exception if a variable appears that is undefined </exception>
+    /// <exception cref="ArgumentException"> Throw an exception if a variable appears that is undefined. </exception>
     [TestMethod]
     public void Formula_TestEvaluate_DividingVariables()
     {
         Formula testFormula = new Formula("x1 / x2 * x3");
-        double testLookup(string s)
+        double TestLookup(string s)
         {
             if (s == "X1")
+            {
                 return 10;
+            }
             else if (s == "X2")
+            {
                 return 2;
+            }
             else if (s == "X3")
+            {
                 return 5;
+            }
             else
+            {
                 throw new ArgumentException("I don't know that variable");
+            }
         }
 
-        Assert.AreEqual(25.0, testFormula.Evaluate(testLookup));
+        Assert.AreEqual(25.0, testFormula.Evaluate(TestLookup));
     }
-
 
     /// <summary>
     ///     <para>
-    ///         Ensure that when multiplying or dividing a variable, if you cannot find its value, a FormulaError is returned as a result
+    ///         Ensure that when multiplying or dividing a variable, if you cannot find its value, a FormulaError is returned as a result.
     ///     </para>
     /// </summary>
-    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentException"> Throws an exception in the case that a variable is missing. </exception>
     [TestMethod]
     public void Formula_TestEvaluate_VariablesNotFound_AfterMultiplyingOrDividing()
     {
         Formula testFormula = new Formula("x1 * x3");
-        double testLookup(string s)
+        double TestLookup(string s)
         {
             if (s == "X1")
+            {
                 return 10;
+            }
             else if (s == "X2")
+            {
                 return 2;
+            }
             else
+            {
                 throw new ArgumentException("I don't know that variable");
+            }
         }
 
-        Assert.IsTrue(testFormula.Evaluate(testLookup) is FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(TestLookup) is FormulaError);
 
         testFormula = new Formula("x1 / x3");
-        Assert.IsTrue(testFormula.Evaluate(testLookup) is FormulaError);
+        Assert.IsTrue(testFormula.Evaluate(TestLookup) is FormulaError);
     }
 
     /// <summary>
     ///     <para>
-    ///         Ensure that when dividing by zero during evaluation, an error is given back to the user
+    ///         Ensure that when dividing by zero during evaluation, an error is given back to the user.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -806,11 +782,10 @@ public class FormulaSyntaxTests
         Assert.IsTrue(testFormula.Evaluate(x1 => 5) is FormulaError);
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that given a decimal floating point value, a proper evaluation fo the given formula is possible 
-    ///         both when this value is an integer and a variable
+    ///         Ensure that given a decimal floating point value, a proper evaluation fo the given formula is possible
+    ///         both when this value is an integer and a variable.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -823,11 +798,10 @@ public class FormulaSyntaxTests
         Assert.AreEqual(1.0, testFormula.Evaluate(x1 => 0.33));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that given a, shortened by notation form, floating point value, a proper evaluation fo the given formula is possible 
-    ///         both when this value is an integer and a variable
+    ///         Ensure that given a, shortened by notation form, floating point value, a proper evaluation fo the given formula is possible
+    ///         both when this value is an integer and a variable.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -838,10 +812,9 @@ public class FormulaSyntaxTests
         Assert.AreEqual(0.1, testFormula.Evaluate(x1 => 3.3E-2));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that all rules following a closing parenthesis being the token are properly followed in the order specified
+    ///         Ensure that all rules following a closing parenthesis being the token are properly followed in the order specified.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -857,10 +830,9 @@ public class FormulaSyntaxTests
         Assert.IsTrue(testFormula.Evaluate(x1 => 5) is FormulaError);
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when adding or subtracting multiple times in a row, the value are added prior to addign the operator to its stack
+    ///         Ensure that when adding or subtracting multiple times in a row, the value are added prior to addign the operator to its stack.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -873,10 +845,9 @@ public class FormulaSyntaxTests
         Assert.AreEqual(11.0, testFormula.Evaluate(x1 => 5));
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given two formula that are the same, they return the same hashcode
+    ///         Ensure that when given two formula that are the same, they return the same hashcode.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -888,10 +859,9 @@ public class FormulaSyntaxTests
         Assert.AreEqual(f1.GetHashCode(), f2.GetHashCode());
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given two formula with similar aspects, but differently ordered, it returns a seperate hashcode
+    ///         Ensure that when given two formula with similar aspects, but differently ordered, it returns a seperate hashcode.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -903,10 +873,9 @@ public class FormulaSyntaxTests
         Assert.AreNotEqual(f1.GetHashCode(), f2.GetHashCode());
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given two formula with similar aspects, but differently ordered, it returns a seperate hashcode
+    ///         Ensure that when given two formula with similar aspects, but differently ordered, it returns a seperate hashcode.
     ///     </para>
     /// </summary>
     [TestMethod]
@@ -921,10 +890,9 @@ public class FormulaSyntaxTests
         Assert.AreNotEqual(f1Hash, f2Hash);
     }
 
-
     /// <summary>
     ///     <para>
-    ///         Ensure that when given two variables that represent potentially different values, two seperate hash codes are different
+    ///         Ensure that when given two variables that represent potentially different values, two seperate hash codes are different.
     ///     </para>
     /// </summary>
     [TestMethod]

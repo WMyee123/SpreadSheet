@@ -176,9 +176,57 @@ public class Formula
     /// <param name="f1"> The first of two formula objects. </param>
     /// <param name="f2"> The second of two formula objects. </param>
     /// <returns> true if the two formulas are the same.</returns>
-    public static bool operator ==(Formula f1, Formula f2)
+    public static bool operator ==(Formula f1, Formula f2) => f1.Equals(f2);
+
+    /// <summary>
+    ///   <para>
+    ///     Reports whether f1 != f2, using the notion of equality from the <see cref="Equals"/> method.
+    ///   </para>
+    /// </summary>
+    /// <param name="f1"> The first of two formula objects. </param>
+    /// <param name="f2"> The second of two formula objects. </param>
+    /// <returns> true if the two formulas are not equal to each other.</returns>
+    public static bool operator !=(Formula f1, Formula f2) => !f1.Equals(f2);
+
+    /// <summary>
+    ///   <para>
+    ///     Determines if two formula objects represent the same formula.
+    ///   </para>
+    ///   <para>
+    ///     By definition, if the parameter is null or does not reference
+    ///     a Formula Object then return false.
+    ///   </para>
+    ///   <para>
+    ///     Two Formulas are considered equal if their canonical string representations
+    ///     (as defined by ToString) are equal.
+    ///   </para>
+    /// </summary>
+    /// <param name="obj"> The other object.</param>
+    /// <returns>
+    ///   True if the two objects represent the same formula.
+    /// </returns>
+    public override bool Equals(object? obj)
     {
-        return f1.Equals(f2);
+        // Ensure that the object being compared to is another formula
+        if (obj is Formula f)
+        {
+            // Get the tokens of both formulas
+            List<string> thisTokens = GetTokens(fullForm);
+            List<string> otherTokens = GetTokens(f.ToString());
+
+            // Compare the two lists of tokens, ensuring that each one is equal, thus implying that the full equation is equal
+            for (int i = 0; i < thisTokens.Count; i++)
+            {
+                if (thisTokens[i] != otherTokens[i])
+                {
+                    return false; // If any token is not equal, false is returned as the formulas are not the same
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -247,222 +295,6 @@ public class Formula
     public override string ToString( )
     {
         return fullForm;
-    }
-
-    /// <summary>
-    ///   Reports whether "token" is a variable.  It must be one or more letters
-    ///   followed by one or more numbers.
-    /// </summary>
-    /// <param name="token"> A token that may be a variable. </param>
-    /// <returns> true if the string matches the requirements, e.g., A1 or a1. </returns>
-    private static bool IsVar( string token )
-    {
-        // notice the use of ^ and $ to denote that the entire string being matched is just the variable
-        string standaloneVarPattern = $"^{VariableRegExPattern}$";
-        return Regex.IsMatch( token, standaloneVarPattern );
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Given an expression, enumerates the tokens that compose it.
-    ///   </para>
-    ///   <para>
-    ///     Tokens returned are:
-    ///   </para>
-    ///   <list type="bullet">
-    ///     <item>left paren</item>
-    ///     <item>right paren</item>
-    ///     <item>one of the four operator symbols</item>
-    ///     <item>a string consisting of one or more letters followed by one or more numbers</item>
-    ///     <item>a double literal</item>
-    ///     <item>and anything that doesn't match one of the above patterns</item>
-    ///   </list>
-    ///   <para>
-    ///     There are no empty tokens; white space is ignored (except to separate other tokens).
-    ///   </para>
-    /// </summary>
-    /// <param name="formula"> A string representing an infix formula such as 1*B1/3.0. </param>
-    /// <returns> The ordered list of tokens in the formula. </returns>
-    private static List<string> GetTokens( string formula )
-    {
-        List<string> results = [];
-
-        string lpPattern = @"\(";
-        string rpPattern = @"\)";
-        string opPattern = @"[\+\-*/]";
-        string doublePattern = @"(?: \d+\.\d* | \d*\.\d+ | \d+ ) (?: [eE][\+-]?\d+)?";
-        string spacePattern = @"\s+";
-
-        // Overall pattern
-        string pattern = string.Format(
-                                        "({0}) | ({1}) | ({2}) | ({3}) | ({4}) | ({5})",
-                                        lpPattern,
-                                        rpPattern,
-                                        opPattern,
-                                        VariableRegExPattern,
-                                        doublePattern,
-                                        spacePattern);
-
-        // Enumerate matching tokens that don't consist solely of white space.
-        foreach ( string s in Regex.Split( formula, pattern, RegexOptions.IgnorePatternWhitespace ) )
-        {
-            if ( !Regex.IsMatch( s, @"^\s*$", RegexOptions.Singleline ) )
-            {
-                results.Add( s );
-            }
-        }
-
-        return results;
-    }
-
-    /// <summary>
-    ///     Check that the token rules are valid while constructing the Formula object, ensuring that an invalid formula
-    ///     is not allowed throughout this process.
-    /// </summary>
-    /// <param name="token">
-    ///     This is the token being inspected to determine the validity of it following the previous token in the formula.
-    /// </param>
-    /// <param name="prevToken">
-    ///     The token that determines the validity of the current token, allowing for proper understanding of the formula's requirements.
-    /// </param>
-    /// <param name="validVars">
-    ///     The variables that were determined to be valid and can be used in the formula.
-    /// </param>
-    /// <returns> A boolean statement as to if the tokens present in the formula are in a valid ordering between one another. </returns>
-    private bool TokenRulesValid(string token, string prevToken, HashSet<string> validVars)
-    {
-        // Check the conditions of when the previous token was a variable
-        if (validVars.Contains(prevToken))
-        {
-            // Return true if an operator follows a variable
-            if (token == "+" || token == "-" || token == "/" || token == "*")
-            {
-                return true;
-            }
-
-            // Return true if a closing parenthesis follows a variable, however an opening parenthesis cannot follow one
-            else if (token == ")")
-            {
-                return true;
-            }
-        }
-
-        // Check the conditions for if the previous token was an operator
-        else if (prevToken == "+" || prevToken == "-" || prevToken == "/" || prevToken == "*")
-        {
-            // Return true if a variable or integer follows an operator
-            if (validVars.Contains(token) || float.TryParse(token, out float i))
-            {
-                return true;
-            }
-
-            // Return true if a parenthesis follows an operator
-            else if (token == "(" || token == ")")
-            {
-                return true;
-            }
-        }
-
-        // Check the conditions for if the previous token was an opening parenthesis
-        else if (prevToken == "(")
-        {
-            // Return true if a variable or integer follows an opening parenthesis
-            if (validVars.Contains(token) || float.TryParse(token, out float i))
-            {
-                return true;
-            }
-
-            // Return true if a second opening parenthesis follows one
-            else if (token == "(")
-            {
-                return true;
-            }
-        }
-
-        // Check the conditions for if the previous token was a closing parenthesis
-        else if (prevToken == ")")
-        {
-            // Return true if an operator follows a closing parenthesis
-            if (token == "+" || token == "-" || token == "/" || token == "*")
-            {
-                return true;
-            }
-
-            // Return true if a second closing parenthesis follows one
-            else if (token == ")")
-            {
-                return true;
-            }
-        }
-
-        // Check the consitions for if the previous token was an integer
-        else if (float.TryParse(prevToken, out float i))
-        {
-            // Return true if an operator follows an integer
-            if (token == "+" || token == "-" || token == "/" || token == "*")
-            {
-                return true;
-            }
-
-            // Return true if a closing parenthesis follows an integer
-            else if (token == ")")
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Reports whether f1 != f2, using the notion of equality from the <see cref="Equals"/> method.
-    ///   </para>
-    /// </summary>
-    /// <param name="f1"> The first of two formula objects. </param>
-    /// <param name="f2"> The second of two formula objects. </param>
-    /// <returns> true if the two formulas are not equal to each other.</returns>
-    public static bool operator !=(Formula f1, Formula f2) => !f1.Equals(f2);
-
-    /// <summary>
-    ///   <para>
-    ///     Determines if two formula objects represent the same formula.
-    ///   </para>
-    ///   <para>
-    ///     By definition, if the parameter is null or does not reference
-    ///     a Formula Object then return false.
-    ///   </para>
-    ///   <para>
-    ///     Two Formulas are considered equal if their canonical string representations
-    ///     (as defined by ToString) are equal.
-    ///   </para>
-    /// </summary>
-    /// <param name="obj"> The other object.</param>
-    /// <returns>
-    ///   True if the two objects represent the same formula.
-    /// </returns>
-    public override bool Equals(object? obj)
-    {
-        // Ensure that the object being compared to is another formula
-        if(obj is Formula f)
-        {
-            // Get the tokens of both formulas
-            List<string> thisTokens = GetTokens(fullForm);
-            List<string> otherTokens = GetTokens(f.ToString());
-
-            // Compare the two lists of tokens, ensuring that each one is equal, thus implying that the full equation is equal
-            for (int i = 0; i < thisTokens.Count; i++)
-            {
-                if (thisTokens[i] != otherTokens[i])
-                {
-                    return false; // If any token is not equal, false is returned as the formulas are not the same
-                }
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     /// <summary>
@@ -649,6 +481,171 @@ public class Formula
     public override int GetHashCode()
     {
         return fullForm.GetHashCode();
+    }
+
+    /// <summary>
+    ///   Reports whether "token" is a variable.  It must be one or more letters
+    ///   followed by one or more numbers.
+    /// </summary>
+    /// <param name="token"> A token that may be a variable. </param>
+    /// <returns> true if the string matches the requirements, e.g., A1 or a1. </returns>
+    private static bool IsVar( string token )
+    {
+        // notice the use of ^ and $ to denote that the entire string being matched is just the variable
+        string standaloneVarPattern = $"^{VariableRegExPattern}$";
+        return Regex.IsMatch( token, standaloneVarPattern );
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Given an expression, enumerates the tokens that compose it.
+    ///   </para>
+    ///   <para>
+    ///     Tokens returned are:
+    ///   </para>
+    ///   <list type="bullet">
+    ///     <item>left paren</item>
+    ///     <item>right paren</item>
+    ///     <item>one of the four operator symbols</item>
+    ///     <item>a string consisting of one or more letters followed by one or more numbers</item>
+    ///     <item>a double literal</item>
+    ///     <item>and anything that doesn't match one of the above patterns</item>
+    ///   </list>
+    ///   <para>
+    ///     There are no empty tokens; white space is ignored (except to separate other tokens).
+    ///   </para>
+    /// </summary>
+    /// <param name="formula"> A string representing an infix formula such as 1*B1/3.0. </param>
+    /// <returns> The ordered list of tokens in the formula. </returns>
+    private static List<string> GetTokens( string formula )
+    {
+        List<string> results = [];
+
+        string lpPattern = @"\(";
+        string rpPattern = @"\)";
+        string opPattern = @"[\+\-*/]";
+        string doublePattern = @"(?: \d+\.\d* | \d*\.\d+ | \d+ ) (?: [eE][\+-]?\d+)?";
+        string spacePattern = @"\s+";
+
+        // Overall pattern
+        string pattern = string.Format(
+                                        "({0}) | ({1}) | ({2}) | ({3}) | ({4}) | ({5})",
+                                        lpPattern,
+                                        rpPattern,
+                                        opPattern,
+                                        VariableRegExPattern,
+                                        doublePattern,
+                                        spacePattern);
+
+        // Enumerate matching tokens that don't consist solely of white space.
+        foreach ( string s in Regex.Split( formula, pattern, RegexOptions.IgnorePatternWhitespace ) )
+        {
+            if ( !Regex.IsMatch( s, @"^\s*$", RegexOptions.Singleline ) )
+            {
+                results.Add( s );
+            }
+        }
+
+        return results;
+    }
+
+    /// <summary>
+    ///     Check that the token rules are valid while constructing the Formula object, ensuring that an invalid formula
+    ///     is not allowed throughout this process.
+    /// </summary>
+    /// <param name="token">
+    ///     This is the token being inspected to determine the validity of it following the previous token in the formula.
+    /// </param>
+    /// <param name="prevToken">
+    ///     The token that determines the validity of the current token, allowing for proper understanding of the formula's requirements.
+    /// </param>
+    /// <param name="validVars">
+    ///     The variables that were determined to be valid and can be used in the formula.
+    /// </param>
+    /// <returns> A boolean statement as to if the tokens present in the formula are in a valid ordering between one another. </returns>
+    private bool TokenRulesValid(string token, string prevToken, HashSet<string> validVars)
+    {
+        // Check the conditions of when the previous token was a variable
+        if (validVars.Contains(prevToken))
+        {
+            // Return true if an operator follows a variable
+            if (token == "+" || token == "-" || token == "/" || token == "*")
+            {
+                return true;
+            }
+
+            // Return true if a closing parenthesis follows a variable, however an opening parenthesis cannot follow one
+            else if (token == ")")
+            {
+                return true;
+            }
+        }
+
+        // Check the conditions for if the previous token was an operator
+        else if (prevToken == "+" || prevToken == "-" || prevToken == "/" || prevToken == "*")
+        {
+            // Return true if a variable or integer follows an operator
+            if (validVars.Contains(token) || float.TryParse(token, out float i))
+            {
+                return true;
+            }
+
+            // Return true if a parenthesis follows an operator
+            else if (token == "(" || token == ")")
+            {
+                return true;
+            }
+        }
+
+        // Check the conditions for if the previous token was an opening parenthesis
+        else if (prevToken == "(")
+        {
+            // Return true if a variable or integer follows an opening parenthesis
+            if (validVars.Contains(token) || float.TryParse(token, out float i))
+            {
+                return true;
+            }
+
+            // Return true if a second opening parenthesis follows one
+            else if (token == "(")
+            {
+                return true;
+            }
+        }
+
+        // Check the conditions for if the previous token was a closing parenthesis
+        else if (prevToken == ")")
+        {
+            // Return true if an operator follows a closing parenthesis
+            if (token == "+" || token == "-" || token == "/" || token == "*")
+            {
+                return true;
+            }
+
+            // Return true if a second closing parenthesis follows one
+            else if (token == ")")
+            {
+                return true;
+            }
+        }
+
+        // Check the consitions for if the previous token was an integer
+        else if (float.TryParse(prevToken, out float i))
+        {
+            // Return true if an operator follows an integer
+            if (token == "+" || token == "-" || token == "/" || token == "*")
+            {
+                return true;
+            }
+
+            // Return true if a closing parenthesis follows an integer
+            else if (token == ")")
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>

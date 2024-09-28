@@ -1,27 +1,26 @@
-﻿// <copyright file="GradingTests.cs" company="UofU-CS3500">
+﻿// <copyright file="FormulaGradingTests1.cs" company="UofU-CS3500">
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-
-/// <summary>
-/// Authors:   Joe Zachary
-///            Daniel Kopta
-///            Jim de St. Germain
-/// Date:      Updated Spring 2022
-/// Course:    CS 3500, University of Utah, School of Computing
-/// Copyright: CS 3500 - This work may not be copied for use
-///                      in Academic Coursework.  See below.
-///
-/// File Contents
-///
-///   This file contains proprietary grading tests for CS 3500.  These tests cases
-///   are for individual student use only and MAY NOT BE SHARED.  Do not back them up
-///   nor place them in any online repository.  Improper use of these test cases
-///   can result in removal from the course and an academic misconduct sanction.
-///
-///   These tests are for your private use only to improve the quality of the
-///   rest of your assignments
-/// </summary>
-/// <date> Updated Fall 2024 </date>
+// <summary>
+// Authors:   Joe Zachary
+//            Daniel Kopta
+//            Jim de St. Germain
+// Date:      Updated Spring 2022
+// Course:    CS 3500, University of Utah, School of Computing
+// Copyright: CS 3500 - This work may not be copied for use
+//                      in Academic Coursework.  See below.
+//
+// File Contents
+//
+//   This file contains proprietary grading tests for CS 3500.  These tests cases
+//   are for individual student use only and MAY NOT BE SHARED.  Do not back them up
+//   nor place them in any online repository.  Improper use of these test cases
+//   can result in removal from the course and an academic misconduct sanction.
+//
+//   These tests are for your private use only to improve the quality of the
+//   rest of your assignments
+// </summary>
+// <date> Updated Fall 2024 </date>
 
 namespace GradingTests;
 

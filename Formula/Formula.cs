@@ -170,6 +170,19 @@ public class Formula
 
     /// <summary>
     ///   <para>
+    ///     Reports whether f1 == f2, using the notion of equality from the <see cref="Equals"/> method.
+    ///   </para>
+    /// </summary>
+    /// <param name="f1"> The first of two formula objects. </param>
+    /// <param name="f2"> The second of two formula objects. </param>
+    /// <returns> true if the two formulas are the same.</returns>
+    public static bool operator ==(Formula f1, Formula f2)
+    {
+        return f1.Equals(f2);
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Returns a set of all the variables in the formula.
     ///   </para>
     ///   <remarks>
@@ -399,19 +412,6 @@ public class Formula
         }
 
         return false;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Reports whether f1 == f2, using the notion of equality from the <see cref="Equals"/> method.
-    ///   </para>
-    /// </summary>
-    /// <param name="f1"> The first of two formula objects. </param>
-    /// <param name="f2"> The second of two formula objects. </param>
-    /// <returns> true if the two formulas are the same.</returns>
-    public static bool operator ==(Formula f1, Formula f2)
-    {
-        return f1.Equals(f2);
     }
 
     /// <summary>

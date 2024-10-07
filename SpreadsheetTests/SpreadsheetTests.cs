@@ -1,7 +1,13 @@
-using CS3500.Formula;
-using CS3500.Spreadsheet;
+// <copyright file="SpreadsheetTests.cs" company="UofU-CS3500">
+//   Copyright (c) 2024 UofU-CS3500. All rights reserved.
+// </copyright>
+// <authors> William Myers </authors>
+// <date> 9/20/2024 </date>
 
 namespace SpreadsheetTests;
+
+using CS3500.Formula;
+using CS3500.Spreadsheet;
 
 /// <summary>
 ///     A test suite for checking the Spreadsheet class for errors in its functions,

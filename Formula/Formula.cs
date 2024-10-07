@@ -253,11 +253,9 @@ public class Formula
 
         foreach (string token in tokens)
         {
-            string normToken = token.ToUpper();
-
-            if (IsVar(normToken))
+            if (IsVar(token))
             {
-                variables.Add(normToken);
+                variables.Add(token);
             }
         }
 
@@ -334,16 +332,18 @@ public class Formula
 
         foreach (string token in tokens)
         {
+            double foundVal = 0; // Set a value to place values within each token, assuming the token is not an operator
+
             // If the token is an integer, these instructions are followed
-            if (double.TryParse(token, out double d))
+            if (double.TryParse(token, out foundVal))
             {
                 // If an operator is present and a multiplier or dividing symbol, the proper math is performed, otherwise the value is added to the value stack
-                if (operatorStack.Count > 0 && (operatorStack.Peek() == "/" || operatorStack.Peek() == "*"))
+                if (operatorStack.TryPeek(out var tempVal) && (tempVal == "/" || tempVal == "*"))
                 {
-                    object newVal = MultiplyOrDivideTokens(d, operatorStack, valueStack);
-                    if (newVal is double)
+                    object newVal = MultiplyOrDivideTokens(foundVal, operatorStack, valueStack);
+                    if (newVal is double doubleVal)
                     {
-                        valueStack.Push(((double)newVal).ToString());
+                        valueStack.Push(doubleVal.ToString());
                     }
                     else
                     {
@@ -352,46 +352,46 @@ public class Formula
                 }
                 else
                 {
-                    valueStack.Push(d.ToString());
+                    valueStack.Push(foundVal.ToString());
                 }
             }
 
             // If the token is a variable, these instructions are followed
             else if (variables.Contains(token))
             {
+                object currNum = new object(); // The object that stores the value of the variable token
+
                 try
                 {
-                    object currNum = lookup(token); // Get the value of this variable
+                    currNum = lookup(token); // Get the value of this variable
+                }
 
-                    if (currNum is double)
+                // If no value is found for this variable, a FormulaError is returned
+                catch (Exception)
+                {
+                    return new FormulaError($"No Reference to Variable {token}");
+                }
+
+                if (currNum is double)
+                {
+                    foundVal = (double)currNum;
+
+                    // The same instructions are done as for an integer if no exception is thrown
+                    if (operatorStack.TryPeek(out var tempVal) && (tempVal == "/" || tempVal == "*"))
                     {
-                        d = (double)currNum;
-
-                        // The same instructions are done as for an integer if no exception is thrown
-                        if (operatorStack.Count > 0 && (operatorStack.Peek() == "/" || operatorStack.Peek() == "*"))
+                        object newVal = MultiplyOrDivideTokens(foundVal, operatorStack, valueStack);
+                        if (newVal is double doubleVal)
                         {
-                            object newVal = MultiplyOrDivideTokens(d, operatorStack, valueStack);
-                            if (newVal is double)
-                            {
-                                valueStack.Push(((double)newVal).ToString());
-                            }
-                            else
-                            {
-                                return newVal;
-                            }
+                            valueStack.Push(doubleVal.ToString());
                         }
                         else
                         {
-                            valueStack.Push(d.ToString());
+                            return newVal;
                         }
                     }
-                }
-
-                // If no vlaue is found for this variable, a formulaError is returned
-                catch (Exception)
-                {
+                    else
                     {
-                        return new FormulaError("No Reference to Variable " + token.ToString());
+                        valueStack.Push(foundVal.ToString());
                     }
                 }
             }
@@ -407,10 +407,10 @@ public class Formula
             {
                 // If another plus or minus sybol is at the top of the operator stack, that operator is analyzed and implemented,
                 // regardless of this, the operator is pushed onto its stack after this check
-                if (operatorStack.Count > 0 && (operatorStack.Peek() == "+" || operatorStack.Peek() == "-"))
+                if (operatorStack.TryPeek(out var tempVal) && (tempVal == "+" || tempVal == "-"))
                 {
-                    object newToken = AddOrSubtractTokens(operatorStack, valueStack);
-                    valueStack.Push(((double)newToken).ToString());
+                    double newToken = AddOrSubtractTokens(operatorStack, valueStack);
+                    valueStack.Push(newToken.ToString());
                 }
 
                 operatorStack.Push(token);
@@ -424,11 +424,8 @@ public class Formula
                 // If the top of the stack is a plus or minus symbol first, the operator is implemented and the found value pushed onto the its stack
                 if (topOfStack == "+" || topOfStack == "-")
                 {
-                    object newToken = AddOrSubtractTokens(operatorStack, valueStack);
-                    if (newToken is double)
-                    {
-                        valueStack.Push(((double)newToken).ToString());
-                    }
+                    double newToken = AddOrSubtractTokens(operatorStack, valueStack);
+                    valueStack.Push(newToken.ToString());
                 }
 
                 // If the top of the stack is now an opening parenthesis, remove it form the operator stack
@@ -440,15 +437,15 @@ public class Formula
 
                 // If the top of the operator stack is a multiplier or division symbol, implement the operator and return the result
                 // This can result an OperatorError if dividing by zero
-                if (operatorStack.Count > 0)
+                if (operatorStack.TryPeek(out var tempVal))
                 {
-                    topOfStack = operatorStack.Peek();
+                    topOfStack = tempVal;
                     if (topOfStack == "*" || topOfStack == "/")
                     {
                         object newVal = MultiplyOrDivideTokens(double.Parse(valueStack.Pop()), operatorStack, valueStack);
-                        if (newVal is double)
+                        if (newVal is double doubleVal)
                         {
-                            valueStack.Push(((double)newVal).ToString());
+                            valueStack.Push(doubleVal.ToString());
                         }
                         else
                         {
@@ -569,7 +566,7 @@ public class Formula
         if (validVars.Contains(prevToken))
         {
             // Return true if an operator follows a variable
-            if (token == "+" || token == "-" || token == "/" || token == "*")
+            if (IsOperator(token))
             {
                 return true;
             }
@@ -582,10 +579,10 @@ public class Formula
         }
 
         // Check the conditions for if the previous token was an operator
-        else if (prevToken == "+" || prevToken == "-" || prevToken == "/" || prevToken == "*")
+        else if (IsOperator(prevToken))
         {
             // Return true if a variable or integer follows an operator
-            if (validVars.Contains(token) || float.TryParse(token, out float i))
+            if (validVars.Contains(token) || double.TryParse(token, out double i))
             {
                 return true;
             }
@@ -601,7 +598,7 @@ public class Formula
         else if (prevToken == "(")
         {
             // Return true if a variable or integer follows an opening parenthesis
-            if (validVars.Contains(token) || float.TryParse(token, out float i))
+            if (validVars.Contains(token) || double.TryParse(token, out double i))
             {
                 return true;
             }
@@ -617,7 +614,7 @@ public class Formula
         else if (prevToken == ")")
         {
             // Return true if an operator follows a closing parenthesis
-            if (token == "+" || token == "-" || token == "/" || token == "*")
+            if (IsOperator(token))
             {
                 return true;
             }
@@ -630,10 +627,10 @@ public class Formula
         }
 
         // Check the consitions for if the previous token was an integer
-        else if (float.TryParse(prevToken, out float i))
+        else if (double.TryParse(prevToken, out double i))
         {
             // Return true if an operator follows an integer
-            if (token == "+" || token == "-" || token == "/" || token == "*")
+            if (IsOperator(token))
             {
                 return true;
             }
@@ -646,6 +643,21 @@ public class Formula
         }
 
         return false;
+    }
+
+    /// <summary>
+    ///     Check if the token being inspected is an operator token, that being a '+', '-', '*', or '/'.
+    /// </summary>
+    /// <param name="token"> The token that is to be inspected. </param>
+    /// <returns> A boolean statement as to if the token is an operator. </returns>
+    private bool IsOperator(string token)
+    {
+       if(token == "+" || token == "-" || token == "/" || token == "*")
+       {
+           return true;
+       }
+
+       return false;
     }
 
     /// <summary>

@@ -3,14 +3,14 @@
 // </copyright>
 // Written by Joe Zachary for CS 3500, September 2013
 // Update by Profs Kopta and de St. Germain
-// - Updated return types
-// - Updated documentation
+// <author> William Myers </author>
+// <date> 9/20/24 </date>
+
 namespace CS3500.Spreadsheet;
 
 using CS3500.DependencyGraph;
 using CS3500.Formula;
 using System.ComponentModel;
-
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 

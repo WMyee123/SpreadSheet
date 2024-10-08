@@ -89,10 +89,9 @@ public class DependencyGraph
     /// <returns> true if the node has dependents. </returns>
     public bool HasDependents(string nodeName)
     {
-        this.dependents.TryGetValue(nodeName, out var dependentList);
-        if (dependentList != null)
+        if (this.dependents.TryGetValue(nodeName, out var dependentList))
         {
-            return dependentList.Count > 0;
+            return true;
         }
 
         return false;
@@ -105,10 +104,9 @@ public class DependencyGraph
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName)
     {
-        this.dependees.TryGetValue(nodeName, out var dependeeList);
-        if (dependeeList != null)
+        if (this.dependees.TryGetValue(nodeName, out var dependeeList))
         {
-            return dependeeList.Count > 0;
+            return true;
         }
 
         return false;
@@ -123,8 +121,7 @@ public class DependencyGraph
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName)
     {
-        this.dependents.TryGetValue(nodeName, out var dependentList);
-        if (dependentList != null)
+        if (this.dependents.TryGetValue(nodeName, out var dependentList))
         {
             return dependentList;
         }
@@ -141,8 +138,7 @@ public class DependencyGraph
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName)
     {
-        this.dependees.TryGetValue(nodeName, out var dependeeList);
-        if (dependeeList != null)
+        if (this.dependees.TryGetValue(nodeName, out var dependeeList))
         {
             return dependeeList;
         }
@@ -223,10 +219,9 @@ public class DependencyGraph
     {
         if (this.dependents.TryGetValue(nodeName, out var dependentsList))
         {
-            List<string> tempList = dependentsList;
-            while (tempList.Count > 0)
+            while (dependentsList.Count > 0)
             {
-                this.RemoveDependency(nodeName, tempList.Last());
+                this.RemoveDependency(nodeName, dependentsList.Last());
             }
         }
 
@@ -247,10 +242,9 @@ public class DependencyGraph
     {
         if (this.dependees.TryGetValue(nodeName, out var dependeesList))
         {
-            List<string> tempList = dependeesList;
-            while (tempList.Count > 0)
+            while (dependeesList.Count > 0)
             {
-                this.RemoveDependency(tempList.Last(), nodeName);
+                this.RemoveDependency(dependeesList.Last(), nodeName);
             }
         }
 

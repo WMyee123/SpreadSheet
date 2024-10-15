@@ -11,6 +11,8 @@ Copyright: CS 3500 and William Myers - This work may not be copied for use in Ac
 
 # Comments To Evaluators
 
+It was decided to use TryGetValue when looking for an instance of a value, due to the possibility of it not existing, 
+rather than creating a new default value to represent the value whenever it is not found to exist
 
 # Consulted Peers
 

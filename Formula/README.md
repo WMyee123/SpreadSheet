@@ -11,7 +11,6 @@ Copyright: CS 3500 and William Myers - This work may not be copied for use in Ac
 
 # Comments To Evaluators
 
-No Comments are needed due to the prgoram speaking for itself, along with the comments present within the Formula class
 
 
 # Consulted Peers

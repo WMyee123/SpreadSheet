@@ -18,6 +18,7 @@ public class DependencyGraphTests
     ///     that being 0 as no values should be initialized upon creation.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_ConstructorTest_TrueSize()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -30,6 +31,7 @@ public class DependencyGraphTests
     ///     new instances of the values but rather, add the connections to existing ones, if already present.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_SizeTest_LargeGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -52,6 +54,7 @@ public class DependencyGraphTests
     ///     dependencies.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_AddDependencyTest_DependencyExists()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -75,6 +78,7 @@ public class DependencyGraphTests
     ///     Ensure that any value in the graph not present does not return true, as they would not have any dependents if they are not within the graph.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependentsTest_FalseCheck()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -86,6 +90,7 @@ public class DependencyGraphTests
     ///     Ensure that when a value present within the graph with one or more dependents shows that it contains those dependents.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependentsTest_TrueCheck()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -105,6 +110,7 @@ public class DependencyGraphTests
     ///     is no dependency to remove.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_RemoveDependencyTest_EmptyGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -121,6 +127,7 @@ public class DependencyGraphTests
     ///     no dependencies present with either value within them are unaffected.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_RemoveDependencyTest_FilledGraph_False()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -147,6 +154,7 @@ public class DependencyGraphTests
     ///     Ensure that when removing a dependency that exists, proper functionality is achieved and no additional changes are made.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_RemoveDependencyTest_FilledGraph_True()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -174,6 +182,7 @@ public class DependencyGraphTests
     ///     false is returned as they would not have dependees.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependeesTest_EmptyGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -187,6 +196,7 @@ public class DependencyGraphTests
     ///     it returns false as it would not have dependees.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependeesTest_FullGraph_False()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -205,6 +215,7 @@ public class DependencyGraphTests
     ///     Ensure that when presented a filled graph with dependees of the designated values, true is returned.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependeesTest_FullGraph_True()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -225,6 +236,7 @@ public class DependencyGraphTests
     ///     </para>
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_GetDependeesTest_EmptyGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -236,6 +248,7 @@ public class DependencyGraphTests
     ///     Ensure that a given value within a graph with multiple dependees provides all three properly.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_GetDependeesTest_FilledGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -259,6 +272,7 @@ public class DependencyGraphTests
     ///     as it has 0 dependees connecting to it.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_GetDependeesTest_FilledGraph_EmptyReturn()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -277,6 +291,7 @@ public class DependencyGraphTests
     ///     thus keeping them in the graph maintains that it no longer has a dependee attached to it.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_GetDependeesTest_DependeeRemoved()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -292,6 +307,7 @@ public class DependencyGraphTests
     ///     Ensure that an empty graph, when given a value to for the dependents of, returns an empty list.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_GetDependentsTest_EmptyGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -304,6 +320,7 @@ public class DependencyGraphTests
     ///     it returns false as it would not have dependents.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependentsTest_FullGraph_False()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -323,6 +340,7 @@ public class DependencyGraphTests
     ///     false is returned as they would not have dependents.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependentsTest_EmptyGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -335,6 +353,7 @@ public class DependencyGraphTests
     ///     Ensure that when presented a filled graph with dependents of the designated values, true is returned.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_HasDependentsTest_FullGraph_True()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -353,6 +372,7 @@ public class DependencyGraphTests
     ///     Ensure that a given value within a graph with multiple dependents provides all three properly.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_GetDependentsTest_FilledGraph()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -374,6 +394,7 @@ public class DependencyGraphTests
     ///         as it has 0 dependents connecting to it.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_GetDependentsTest_FilledGraph_EmptyReturn()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -392,6 +413,7 @@ public class DependencyGraphTests
     ///     replaces all the values with the new list of value assigned.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_ReplaceDependeesTest()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -414,6 +436,7 @@ public class DependencyGraphTests
     ///     Ensure that when replacing a value's dependees with a new value, it will not add its own value to this new list.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_ReplaceDependeesTest_SameNode()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -436,6 +459,7 @@ public class DependencyGraphTests
     ///     Ensure that when replacing the dependents of a value, each value is removed and reset to a new list of values.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_ReplaceDependentsTest()
     {
         DependencyGraph testGraph = new DependencyGraph();
@@ -458,6 +482,7 @@ public class DependencyGraphTests
     ///     Ensure that when replacing the dependents of a value with itself, it is unable to do so.
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void DependencyGraph_ReplaceDependentsTest_SameNode()
     {
         DependencyGraph testGraph = new DependencyGraph();

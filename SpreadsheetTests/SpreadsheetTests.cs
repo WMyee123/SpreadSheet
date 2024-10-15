@@ -22,6 +22,7 @@ public class SpreadsheetTests
     ///     it is able to properly do so
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_Integer()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -62,6 +63,7 @@ public class SpreadsheetTests
     ///     </remarks>
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_String()
     {
         Spreadsheet testSheet = new Spreadsheet();
@@ -96,6 +98,7 @@ public class SpreadsheetTests
     ///     Ensure that dependencies can be asserted both directly and indirectly when changing the value within a cell
     /// </summary>
     [TestMethod]
+    [Timeout(2000)]
     public void Spreadsheet_TestSetCellContents_Formula_Dependencies()
     {
         Spreadsheet testSheet = new Spreadsheet();

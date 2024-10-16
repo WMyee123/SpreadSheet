@@ -58,7 +58,7 @@ public class Formula
     ///     This value stores the phrase, normalized and reduced to be just the tokens with spaces between them,
     ///     allowing for simplified representations of the formula.
     /// </summary>
-    private string fullForm;
+    private readonly string stringForm;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -94,16 +94,16 @@ public class Formula
         int parenthesisCount = 0; // A count of the number of open/closing parenthesis, ensuring balance between the two tokens
 
         // Store and normalize the formula, allowing for proper representation of the tokens and values present within
-        fullForm = string.Empty;
+        stringForm = string.Empty;
         foreach(string currToken in tokens)
         {
             if(double.TryParse(currToken, out double r))
             {
-                fullForm += double.Parse(currToken);
+                stringForm += double.Parse(currToken);
             }
             else
             {
-                fullForm += currToken.ToUpper();
+                stringForm += currToken.ToUpper();
             }
         }
 
@@ -211,7 +211,7 @@ public class Formula
         if (obj is Formula f)
         {
             // Get the tokens of both formulas
-            List<string> thisTokens = GetTokens(fullForm);
+            List<string> thisTokens = GetTokens(stringForm);
             List<string> otherTokens = GetTokens(f.ToString());
 
             // Compare the two lists of tokens, ensuring that each one is equal, thus implying that the full equation is equal
@@ -249,7 +249,7 @@ public class Formula
     public ISet<string> GetVariables( )
     {
         HashSet<string> variables = new HashSet<string>();
-        List<string> tokens = GetTokens(fullForm);
+        List<string> tokens = GetTokens(stringForm);
 
         foreach (string token in tokens)
         {
@@ -292,7 +292,7 @@ public class Formula
     /// </summary>
     public override string ToString( )
     {
-        return fullForm;
+        return stringForm;
     }
 
     /// <summary>
@@ -328,7 +328,7 @@ public class Formula
         Stack<string> valueStack = new Stack<string>();
         Stack<string> operatorStack = new Stack<string>();
         HashSet<string> variables = GetVariables().ToHashSet();
-        List<string> tokens = GetTokens(fullForm);
+        List<string> tokens = GetTokens(stringForm);
 
         foreach (string token in tokens)
         {
@@ -477,7 +477,7 @@ public class Formula
     /// <returns> The hashcode for the object. </returns>
     public override int GetHashCode()
     {
-        return fullForm.GetHashCode();
+        return stringForm.GetHashCode();
     }
 
     /// <summary>

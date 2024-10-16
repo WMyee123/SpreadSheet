@@ -6,7 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F040569C-0B7E-47D6-B76C-CE85A62BFFA8}"
 	ProjectSection(SolutionItems) = preProject
 		..\.editorconfig = ..\.editorconfig
+		Whiteboard\architecture.png = Whiteboard\architecture.png
+		Whiteboard\dependencygraph_whiteboard.png = Whiteboard\dependencygraph_whiteboard.png
+		Whiteboard\formula_whiteboard.png = Whiteboard\formula_whiteboard.png
 		README.md = README.md
+		Whiteboard\spreadsheet_whiteboard.png = Whiteboard\spreadsheet_whiteboard.png
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formula", "Formula\Formula.csproj", "{F5867CA1-BA39-4235-BF5E-182C7B7F299F}"
@@ -20,13 +24,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyGraph", "Dependen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyGraphTests", "DependencyGraphTests\DependencyGraphTests.csproj", "{E105AEA2-BD14-4770-9251-7C12EA5DAC60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spreadsheet", "Spreadsheet\Spreadsheet.csproj", "{31D61FBC-7235-43B8-AC83-B88533A41F32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spreadsheet", "Spreadsheet\Spreadsheet.csproj", "{31D61FBC-7235-43B8-AC83-B88533A41F32}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4F1EFE26-77CF-414E-849C-7C4AF6262CBE} = {4F1EFE26-77CF-414E-849C-7C4AF6262CBE}
 		{F5867CA1-BA39-4235-BF5E-182C7B7F299F} = {F5867CA1-BA39-4235-BF5E-182C7B7F299F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetTests", "SpreadsheetTests\SpreadsheetTests.csproj", "{50792792-2734-453B-89FA-4B0B6F94C480}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadsheetTests", "SpreadsheetTests\SpreadsheetTests.csproj", "{50792792-2734-453B-89FA-4B0B6F94C480}"
 	ProjectSection(ProjectDependencies) = postProject
 		{31D61FBC-7235-43B8-AC83-B88533A41F32} = {31D61FBC-7235-43B8-AC83-B88533A41F32}
 		{F5867CA1-BA39-4235-BF5E-182C7B7F299F} = {F5867CA1-BA39-4235-BF5E-182C7B7F299F}

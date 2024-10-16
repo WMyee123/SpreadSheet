@@ -500,4 +500,105 @@ public class SpreadsheetTests
             Assert.AreEqual(cellNames[i], changedCells[i]);
         }
     }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestGetCellValue_Formula_Valid()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetContentsOfCell("A1", "=B1 + 4");
+        testSheet.SetContentsOfCell("B1", "15");
+
+        Assert.AreEqual(19, testSheet.GetCellValue("A1"));
+    }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestGetCellValue_Formula_Invalid()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetContentsOfCell("A1", "=B1 + 4");
+
+        Assert.IsTrue(testSheet.GetCellValue("A1") is FormulaError);
+    }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestGetCellValue_Double()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetContentsOfCell("A1", "4.17");
+
+        if (testSheet.GetCellValue("A1") is double value)
+        {
+            Assert.AreEqual(4.17, value, 1e-9);
+        }
+    }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestGetCellValue_String()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetContentsOfCell("A1", "test phrase");
+
+        if (testSheet.GetCellValue("A1") is string value)
+        {
+            Assert.AreEqual("test phrase", value);
+        }
+    }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestIndexer_FilledCells()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+        const int SIZE = 100;
+
+        for (int i = 1; i < SIZE; i++)
+        {
+            testSheet.SetContentsOfCell($"A{i}", i.ToString());
+        }
+
+        for (int i = 1; i < SIZE; i++)
+        {
+            Assert.AreEqual(i, testSheet[$"A{i}"]);
+        }
+    }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestIndexer_EmptyCell()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        Assert.IsTrue(testSheet["A1"] is FormulaError);
+    }
+
+
+    [TestMethod]
+    [Timeout(2000)]
+    public void Spreadsheet_TestSave_Changed()
+    {
+        Spreadsheet testSheet = new Spreadsheet();
+
+        testSheet.SetContentsOfCell("A1", "5");
+        testSheet.Save("testSheet.JSON");
+
+        testSheet.SetContentsOfCell("A1", "15");
+        Assert.AreEqual(15, testSheet.GetCellValue("A1"));
+
+        testSheet.Load("testSheet.JSON");
+        Assert.AreEqual(5, testSheet.GetCellValue("A1"));
+    }
 }

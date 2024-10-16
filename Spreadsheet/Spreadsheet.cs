@@ -493,7 +493,10 @@ public class Spreadsheet
     /// <exception cref="InvalidNameException">
     ///     If the name parameter is invalid, throw an InvalidNameException.
     /// </exception>
-    public object this[string cellName];
+    public object this[string cellName]
+    {
+        get { throw new NotImplementedException(); }
+    }
 
     /// <summary>
     ///     <para>
@@ -559,7 +562,10 @@ public class Spreadsheet
     ///     the method should throw a SpreadsheetReadWriteException with an
     ///     explanatory message.
     /// </exception>
-    public void Save(string filename);
+    public void Save(string filename)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <summary>
     ///     <para>
@@ -576,7 +582,10 @@ public class Spreadsheet
     /// </summary>
     /// <param name="filename"> The saved file name including the path. </param>
     /// <exception cref="SpreadsheetReadWriteException"> When the file cannot be opened or the json is bad.</exception>
-    public void Load(string filename);
+    public void Load(string filename)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <summary>
     ///     <para>
@@ -593,7 +602,10 @@ public class Spreadsheet
     /// <exception cref="InvalidNameException">
     ///     If the provided name is invalid, throws an InvalidNameException.
     /// </exception>
-    public object GetCellValue(string cellName);
+    public object GetCellValue(string cellName)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <summary>
     ///     <para>
@@ -658,7 +670,10 @@ public class Spreadsheet
     ///     cause a circular dependency, throw a CircularException.
     ///     (NOTE: No change is made to the spreadsheet.)
     /// </exception>
-    public IList<string> SetContentsOfCell(string name, string content);
+    public IList<string> SetContentsOfCell(string name, string content)
+    {
+        throw new NotImplementedException();
+    }
     }
 
 /// <summary>

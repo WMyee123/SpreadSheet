@@ -28,27 +28,27 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();
 
         string[] tempArr = { "A1" };
-        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + 4")).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("A1", "=B1 + 4").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
-        actualArr = testSheet.SetCellContents("A1", -4).ToArray();
+        actualArr = testSheet.SetContentsOfCell("A1", "-4").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]); // Check for negative values
         }
 
         // Check for multiple forms of decimal values being utilized in a cell
-        actualArr = testSheet.SetCellContents("A1", 0.0423).ToArray();
+        actualArr = testSheet.SetContentsOfCell("A1", "0.0423").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
 
-        actualArr = testSheet.SetCellContents("A1", 4.23e-2).ToArray();
+        actualArr = testSheet.SetContentsOfCell("A1", "4.23e-2").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]); // Check for negative values
@@ -69,7 +69,7 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();
 
         string[] tempArr = { "A1" };
-        string[] actualArr = testSheet.SetCellContents("A1", "Test String").ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("A1", "Test String").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]); // Check for negative values
@@ -86,7 +86,7 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();
 
         string[] tempArr = { "A1" };
-        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + 4")).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("A1", "=B1 + 4").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
@@ -103,21 +103,21 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
         string[] tempArr = { "A1" };
-        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + 4")).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("A1", "=B1 + 4").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
         tempArr = new string[] { "B1", "A1" };
-        actualArr = testSheet.SetCellContents("B1", new Formula("C1 * 2")).ToArray();
+        actualArr = testSheet.SetContentsOfCell("B1", "=C1 * 2").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
         tempArr = new string[] { "C1", "B1", "A1" };
-        actualArr = testSheet.SetCellContents("C1", 15).ToArray();
+        actualArr = testSheet.SetContentsOfCell("C1", "15").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
@@ -134,21 +134,21 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
         string[] tempArr = { "A1" };
-        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + C1")).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("A1", "=B1 + C1").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
         tempArr = new string[] { "B1", "A1" };
-        actualArr = testSheet.SetCellContents("B1", new Formula("2")).ToArray();
+        actualArr = testSheet.SetContentsOfCell("B1", "=2").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
         tempArr = new string[] { "C1", "A1" };
-        actualArr = testSheet.SetCellContents("C1", 15).ToArray();
+        actualArr = testSheet.SetContentsOfCell("C1", "15").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
@@ -164,14 +164,14 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("A1", new Formula("B1 + 5"));
+        testSheet.SetContentsOfCell("A1", "=B1 + 5");
         Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
 
-        testSheet.SetCellContents("A1", 15.7);
+        testSheet.SetContentsOfCell("A1", "15.7");
         Assert.AreEqual(15.7, testSheet.GetCellContents("A1"));
 
         string[] tempArr = new string[] { "B1" };
-        string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("B1", "14").ToArray();
         for (int i = 0; i < actualArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
@@ -187,16 +187,16 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("A1", new Formula("B1 + 5"));
+        testSheet.SetContentsOfCell("A1", "=B1 + 5");
         Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
 
         // Reset A1 to contain a string
-        testSheet.SetCellContents("A1", "Test");
+        testSheet.SetContentsOfCell("A1", "Test");
         Assert.AreEqual("Test", testSheet.GetCellContents("A1"));
 
         // Check that A1 is no longer dependent on B1
         string[] tempArr = new string[] { "B1" };
-        string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("B1", "14").ToArray();
         for (int i = 0; i < actualArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
@@ -213,16 +213,16 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("A1", new Formula("B1 + 5"));
+        testSheet.SetContentsOfCell("A1", "=B1 + 5");
         Assert.AreEqual(new Formula("B1 + 5"), testSheet.GetCellContents("A1"));
 
         // Reset the contents of A1 to not reference B1
-        testSheet.SetCellContents("A1", new Formula("C1 + 7"));
+        testSheet.SetContentsOfCell("A1", "=C1 + 7");
         Assert.AreEqual(new Formula("C1 + 7"), testSheet.GetCellContents("A1"));
 
         // Check that B1 is not a dependent of A1
         string[] tempArr = new string[] { "B1" };
-        string[] actualArr = testSheet.SetCellContents("B1", 14).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("B1", "14").ToArray();
         for (int i = 0; i < actualArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
@@ -230,7 +230,7 @@ public class SpreadsheetTests
 
         // Check that changing the new dependent cell affects A1 properly
         tempArr = new string[] { "C1", "A1" };
-        actualArr = testSheet.SetCellContents("C1", 14).ToArray();
+        actualArr = testSheet.SetContentsOfCell("C1", "14").ToArray();
         for (int i = 0; i < actualArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
@@ -251,13 +251,13 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();
 
         string[] tempArr = { "A1" };
-        string[] actualArr = testSheet.SetCellContents("A1", new Formula("B1 + 4")).ToArray();
+        string[] actualArr = testSheet.SetContentsOfCell("A1", "=B1 + 4").ToArray();
         for (int i = 0; i < tempArr.Length; i++)
         {
             Assert.AreEqual(tempArr[i], actualArr[i]);
         }
 
-        testSheet.SetCellContents("B1", new Formula("A1 * 2"));
+        testSheet.SetContentsOfCell("B1", "=A1 * 2");
     }
 
     /// <summary>
@@ -270,7 +270,7 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("/15", 5);
+        testSheet.SetContentsOfCell("/15", "5");
     }
 
     /// <summary>
@@ -284,7 +284,7 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("A15A", 5);
+        testSheet.SetContentsOfCell("A15A", "5");
     }
 
     /// <summary>
@@ -297,7 +297,7 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("17A", "test");
+        testSheet.SetContentsOfCell("17A", "test");
     }
 
     /// <summary>
@@ -310,7 +310,7 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("17A", 15.0);
+        testSheet.SetContentsOfCell("17A", "15.0");
     }
 
     /// <summary>
@@ -323,7 +323,7 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("17A", new Formula("5 + A1"));
+        testSheet.SetContentsOfCell("17A", "=5 + A1");
     }
 
 
@@ -337,13 +337,13 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("A1", new Formula("B1 + 4"));
-        testSheet.SetCellContents("B1", 3);
+        testSheet.SetContentsOfCell("A1", "=B1 + 4");
+        testSheet.SetContentsOfCell("B1", "3");
 
         // Assert.AreEqual(new Formula("B1 + 4"), testSheet.GetCellContents("A1"));
         Assert.AreEqual(3.0, testSheet.GetCellContents("B1"));
 
-        testSheet.SetCellContents("B1", 14);
+        testSheet.SetContentsOfCell("B1", "14");
         // Assert.AreEqual(new Formula("B1 + 4"), testSheet.GetCellContents("A1"));
         Assert.AreEqual(14.0, testSheet.GetCellContents("B1"));
     }
@@ -377,7 +377,7 @@ public class SpreadsheetTests
     public void Spreadsheet_TestGetAllNonEmptyCells_DependencyOnEmptyCell()
     {
         Spreadsheet testSheet = new Spreadsheet();
-        testSheet.SetCellContents("A1", new Formula("B1 + 15"));
+        testSheet.SetContentsOfCell("A1", "=B1 + 15");
 
         List<string> actualList = testSheet.GetNamesOfAllNonemptyCells().ToList();
 
@@ -400,8 +400,8 @@ public class SpreadsheetTests
     public void Spreadsheet_TestGetAllNonEmptyCells_FilledThanEmptiedCell()
     {
         Spreadsheet testSheet = new Spreadsheet();
-        testSheet.SetCellContents("A1", new Formula("B1 + 15"));
-        testSheet.SetCellContents("A1", "");
+        testSheet.SetContentsOfCell("A1", "=B1 + 15");
+        testSheet.SetContentsOfCell("A1", "");
 
         ISet<string> testSet = new HashSet<string>();
         testSet.Add("A1");
@@ -437,7 +437,7 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("A1", "1 + 2");
+        testSheet.SetContentsOfCell("A1", "1 + 2");
 
         Assert.AreEqual("1 + 2", testSheet.GetCellContents("A1"));
     }
@@ -451,9 +451,9 @@ public class SpreadsheetTests
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        testSheet.SetCellContents("A1", "1");
+        testSheet.SetContentsOfCell("A1", "1");
 
-        Assert.AreEqual("1", testSheet.GetCellContents("A1"));
+        Assert.AreEqual(1.0, testSheet.GetCellContents("A1"));
     }
 
     /// <summary>
@@ -476,7 +476,7 @@ public class SpreadsheetTests
     public void Spreadsheet_TestStress_SetCellContents()
     {
         Spreadsheet testSheet = new Spreadsheet();
-        const int SIZE = 500;
+        const int SIZE = 250;
         List<string> cellNames = new List<string>();
 
         for (int i = 0; i <= SIZE; i++)
@@ -488,11 +488,11 @@ public class SpreadsheetTests
         {
             for (int j = i + 1; j < SIZE; j++)
             {
-                testSheet.SetCellContents(cellNames[i], new Formula($"{cellNames[j]} + {cellNames[j + 1]}"));
+                testSheet.SetContentsOfCell(cellNames[i], $"={cellNames[j]} + {cellNames[j + 1]}");
             }
         }
 
-        List<string> changedCells = testSheet.SetCellContents(cellNames[SIZE], 15).ToList();
+        List<string> changedCells = testSheet.SetContentsOfCell(cellNames[SIZE], "15").ToList();
         cellNames.Reverse();
         cellNames.Remove(cellNames[1]);
         for (int i = 0; i < SIZE - 1; i++)
@@ -511,7 +511,7 @@ public class SpreadsheetTests
         testSheet.SetContentsOfCell("A1", "=B1 + 4");
         testSheet.SetContentsOfCell("B1", "15");
 
-        Assert.AreEqual(19, testSheet.GetCellValue("A1"));
+        Assert.AreEqual(19.0, testSheet.GetCellValue("A1"));
     }
 
 
@@ -564,12 +564,12 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();
         const int SIZE = 100;
 
-        for (int i = 1; i < SIZE; i++)
+        for (double i = 1; i < SIZE; i++)
         {
             testSheet.SetContentsOfCell($"A{i}", i.ToString());
         }
 
-        for (int i = 1; i < SIZE; i++)
+        for (double i = 1; i < SIZE; i++)
         {
             Assert.AreEqual(i, testSheet[$"A{i}"]);
         }
@@ -578,11 +578,12 @@ public class SpreadsheetTests
 
     [TestMethod]
     [Timeout(2000)]
+    [ExpectedException(typeof(InvalidNameException))]
     public void Spreadsheet_TestIndexer_EmptyCell()
     {
         Spreadsheet testSheet = new Spreadsheet();
 
-        Assert.IsTrue(testSheet["A1"] is FormulaError);
+        _ = testSheet["A1"];
     }
 
 

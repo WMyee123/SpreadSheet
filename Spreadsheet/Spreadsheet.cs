@@ -306,11 +306,22 @@ public class Spreadsheet
             throw new InvalidNameException();
         }
 
-        foreach (var dependent in formula.GetVariables())
+        foreach (string dependent in formula.GetVariables())
         {
-            if (GetCellContents(dependent) is Formula tempForm && tempForm.GetVariables().Contains(name))
+            Stack<string> dependentCells = new Stack<string>();
+            dependentCells.Push(dependent);
+
+            while (dependentCells.TryPop(out string innerdependent))
             {
-                throw new CircularException();
+                if (GetDirectDependents(innerdependent).Contains(name))
+                {
+                    throw new CircularException();
+                }
+
+                foreach (string currCell in GetDirectDependents(innerdependent))
+                {
+                    dependentCells.Push(currCell);
+                }
             }
         }
 
@@ -353,7 +364,7 @@ public class Spreadsheet
     /// </returns>
     private IEnumerable<string> GetDirectDependents(string name)
     {
-        return this.dependencies.GetDependees(name);
+        return this.dependencies.GetDependents(name);
     }
 
     /// <summary>
@@ -717,16 +728,53 @@ public class Spreadsheet
             }
         }
 
-
         foreach (string currCell in editedCells)
         {
-            if(cells.TryGetValue(currCell, out Cell cell))
-            {
-                throw new NotImplementedException();
-            }
+            RefreshCell(currCell);
         }
 
         return editedCells;
+    }
+
+    /// <summary>
+    ///     A method to find the value present within a cell, given that it is filled.
+    /// </summary>
+    /// <param name="lookupCell"> The cell that is to be examined for the value of. </param>
+    /// <returns> The value held within the designated cell, or an exception if the cell does not hold a specific integer value. </returns>
+    /// <exception cref="ArgumentException"> In the case that a non-integer value is represented within the cell. </exception>
+    private double LookupCellValue(string lookupCell)
+    {
+        cells.TryGetValue(lookupCell, out var foundCell);
+
+        if(foundCell is Cell currCell)
+        {
+            object cellVal = foundCell.GetValue();
+
+            if(cellVal is double doubleVal)
+            {
+                return doubleVal;
+            }
+        }
+
+        throw new InvalidNameException();
+    }
+
+    /// <summary>
+    ///     Refresh the value of the current cell after another cell's value is changed.
+    /// </summary>
+    /// <param name="cellName"> The name of the cell that's value is being reset. </param>
+    private void RefreshCell(string cellName)
+    {
+        cells.TryGetValue(cellName, out var currCell);
+
+        if (currCell?.GetContents() is Formula tempForm)
+        {
+            currCell?.SetValue(tempForm.Evaluate(s => LookupCellValue(s)));
+        }
+        else
+        {
+            currCell?.SetValue(currCell.GetContents());
+        }
     }
 
     /// <summary>
@@ -787,8 +835,7 @@ public class Spreadsheet
             return this.value;
         }
 
-
-        private void SetValue(object value)
+        public void SetValue(object value)
         {
             this.value = value;
         }

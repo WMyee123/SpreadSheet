@@ -15,6 +15,8 @@ using System.ComponentModel;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.Json.Serialization;
+using System.Reflection.Metadata;
 
 /// <summary>
 ///     <para>
@@ -108,8 +110,28 @@ public class SpreadsheetReadWriteException : Exception
 /// </summary>
 public class Spreadsheet
 {
-    private Dictionary<string, Cell> cells = new Dictionary<string, Cell>();
-    private DependencyGraph dependencies = new DependencyGraph();
+    private string name;
+    private Dictionary<string, Cell> cells;
+    private DependencyGraph dependencies;
+
+    /// <summary>
+    ///     Create a default spreadsheet, with no specified title.
+    /// </summary>
+    public Spreadsheet()
+        : this("default")
+    {
+    }
+
+    /// <summary>
+    ///     Create a new spreadsheet with a specified title attached.
+    /// </summary>
+    /// <param name="name"> The title that is attached to the spreadsheet. </param>
+    public Spreadsheet(string name)
+    {
+        this.name = name;
+        cells = new Dictionary<string, Cell>();
+        dependencies = new DependencyGraph();
+    }
 
     /// <summary>
     ///     Provides a copy of the names of all of the cells in the spreadsheet
@@ -284,7 +306,7 @@ public class Spreadsheet
             throw new InvalidNameException();
         }
 
-        foreach(var dependent in formula.GetVariables())
+        foreach (var dependent in formula.GetVariables())
         {
             if (GetCellContents(dependent) is Formula tempForm && tempForm.GetVariables().Contains(name))
             {
@@ -386,7 +408,7 @@ public class Spreadsheet
     /// </returns>
     private IEnumerable<string> GetCellsToRecalculate(string name)
     {
-        LinkedList<string> changed = new ();
+        LinkedList<string> changed = new();
         HashSet<string> visited = new HashSet<string>();
         this.Visit(name, name, visited, changed);
         return changed;
@@ -495,7 +517,7 @@ public class Spreadsheet
     /// </exception>
     public object this[string cellName]
     {
-        get { throw new NotImplementedException(); }
+        get { return GetCellValue(cellName); }
     }
 
     /// <summary>
@@ -564,7 +586,7 @@ public class Spreadsheet
     /// </exception>
     public void Save(string filename)
     {
-        throw new NotImplementedException();
+        
     }
 
     /// <summary>
@@ -604,7 +626,12 @@ public class Spreadsheet
     /// </exception>
     public object GetCellValue(string cellName)
     {
-        throw new NotImplementedException();
+        if (cells.TryGetValue(cellName, out var currCell))
+        {
+            return currCell.GetValue();
+        }
+
+        throw new InvalidNameException();
     }
 
     /// <summary>
@@ -672,59 +699,98 @@ public class Spreadsheet
     /// </exception>
     public IList<string> SetContentsOfCell(string name, string content)
     {
-        throw new NotImplementedException();
-    }
-    }
+        IList<string> editedCells = new List<string>();
 
-/// <summary>
-///     <para>
-///         A class to define a cell and the contents stored within it.
-///     </para>
-///     <list type="number">
-///         <item>
-///             contents - The value stored within the cell for reference in the spreadsheet
-///         </item>
-///     </list>
-/// </summary>
-internal class Cell
-{
-    private object contents; // A string representation of the values that can be stored in the cell
+        if(double.TryParse(content, out double cellVal))
+        {
+            editedCells = SetCellContents(name, cellVal);
+        }
+        else if(content.Length > 0)
+        {
+            if (content.StartsWith("="))
+            {
+                editedCells = SetCellContents(name, new Formula(content.Substring(1)));
+            }
+            else
+            {
+                editedCells = SetCellContents(name, content);
+            }
+        }
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="Cell"/> class, containing a number represented as a double.
-    /// </summary>
-    /// <param name="data"> The number that is to be stored within the cell. </param>
-    public Cell(double data)
-    {
-        this.contents = data;
-    }
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="Cell"/> class, containing a string of characters.
-    /// </summary>
-    /// <param name="data"> The string that is to be stored within the cell. </param>
-    public Cell(string data)
-    {
-        this.contents = data;
-    }
+        foreach (string currCell in editedCells)
+        {
+            if(cells.TryGetValue(currCell, out Cell cell))
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="Cell"/> class, containing a formula for finding a value represented in this formula.
-    /// </summary>
-    /// <param name="data"> The formula that is to be stored within the cell. </param>
-    public Cell(Formula data)
-    {
-        this.contents = data;
+        return editedCells;
     }
 
     /// <summary>
     ///     <para>
-    ///         Get the contents that are stored within the cell, returning a string representation of these contents.
+    ///         A class to define a cell and the contents stored within it.
     ///     </para>
+    ///     <list type="number">
+    ///         <item>
+    ///             contents - The value stored within the cell for reference in the spreadsheet
+    ///         </item>
+    ///     </list>
     /// </summary>
-    /// <returns> A string representation of the contents within the cell for manipulation within the spreadsheet. </returns>
-    public object GetContents()
+    internal class Cell
     {
-        return this.contents;
+        private object contents; // A string representation of the values that can be stored in the cell
+        private object value;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Cell"/> class, containing a number represented as a double.
+        /// </summary>
+        /// <param name="data"> The number that is to be stored within the cell. </param>
+        public Cell(double data)
+        {
+            this.contents = data;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Cell"/> class, containing a string of characters.
+        /// </summary>
+        /// <param name="data"> The string that is to be stored within the cell. </param>
+        public Cell(string data)
+        {
+            this.contents = data;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Cell"/> class, containing a formula for finding a value represented in this formula.
+        /// </summary>
+        /// <param name="data"> The formula that is to be stored within the cell. </param>
+        public Cell(Formula data)
+        {
+            this.contents = data;
+        }
+
+        /// <summary>
+        ///     <para>
+        ///         Get the contents that are stored within the cell, returning a string representation of these contents.
+        ///     </para>
+        /// </summary>
+        /// <returns> A string representation of the contents within the cell for manipulation within the spreadsheet. </returns>
+        public object GetContents()
+        {
+            return this.contents;
+        }
+
+        public object GetValue()
+        {
+            return this.value;
+        }
+
+
+        private void SetValue(object value)
+        {
+            this.value = value;
+        }
     }
 }

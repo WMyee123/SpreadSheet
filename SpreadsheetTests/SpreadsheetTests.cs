@@ -594,12 +594,12 @@ public class SpreadsheetTests
         Spreadsheet testSheet = new Spreadsheet();
 
         testSheet.SetContentsOfCell("A1", "5");
-        testSheet.Save("testSheet.JSON");
+        testSheet.Save("testSheet.json");
 
         testSheet.SetContentsOfCell("A1", "15");
-        Assert.AreEqual(15, testSheet.GetCellValue("A1"));
+        Assert.AreEqual(15.0, testSheet.GetCellValue("A1"));
 
-        testSheet.Load("testSheet.JSON");
-        Assert.AreEqual(5, testSheet.GetCellValue("A1"));
+        testSheet.Load("testSheet.json");
+        Assert.AreEqual(5.0, testSheet.GetCellValue("A1"));
     }
 }

@@ -17,6 +17,9 @@ using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Text.Json.Serialization;
 using System.Reflection.Metadata;
+using System.Text.Json;
+using System.Diagnostics;
+using System.Text.Json.Serialization.Metadata;
 
 /// <summary>
 ///     <para>
@@ -202,14 +205,8 @@ public class Spreadsheet
     /// </returns>
     private IList<string> SetCellContents(string name, double number)
     {
-        // Check that the cell that is being set has a valid name
-        if (!this.ValidCell(name))
-        {
-            throw new InvalidNameException();
-        }
-
         // Ensure that the number submitted is a proper value
-        else if (!double.IsNaN(number))
+        if (!double.IsNaN(number))
         {
             // If a cell is empty, set that sell to contain the provided number, otherwise remove the cell and
             // add it back to the spreadsheet, resetting the contents of the cell in the process
@@ -247,32 +244,21 @@ public class Spreadsheet
     /// </returns>
     private IList<string> SetCellContents(string name, string text)
     {
-        // Check that the cell that is being set has a valid name
-        if (!this.ValidCell(name))
+        // If a cell is empty, set that sell to contain the provided string, otherwise remove the cell and
+        // add it back to the spreadsheet, resetting the contents of the cell in the process
+        if (!this.cells.TryGetValue(name, out var cellVal))
         {
-            throw new InvalidNameException();
+            this.cells.Add(name, new Cell(text));
         }
-
-        // Check that the value being set into the cell is not empty or null
-        else if (!(text == string.Empty || text == null))
+        else
         {
-            // If a cell is empty, set that sell to contain the provided string, otherwise remove the cell and
-            // add it back to the spreadsheet, resetting the contents of the cell in the process
-            if (!this.cells.TryGetValue(name, out var cellVal))
+            List<string> dependents = this.dependencies.GetDependents(name).ToList();
+            foreach (string dependentCell in dependents)
             {
-                this.cells.Add(name, new Cell(text));
+                this.dependencies.RemoveDependency(name, dependentCell);
             }
-            else
-            {
-                List<string> dependents = this.dependencies.GetDependents(name).ToList();
-                foreach (string dependentCell in dependents)
-                {
-                    this.dependencies.RemoveDependency(name, dependentCell);
-                }
-
-                this.cells.Remove(name);
-                this.cells.Add(name, new Cell(text));
-            }
+            this.cells.Remove(name);
+            this.cells.Add(name, new Cell(text));
         }
 
         return this.GetCellsToRecalculate(name).ToList(); // Return a list of all cells that need to be recalculated for proper representation in the spreadsheet
@@ -300,29 +286,10 @@ public class Spreadsheet
     /// </returns>
     private IList<string> SetCellContents(string name, Formula formula)
     {
-        // Check that the cell that is being set has a valid name
-        if (!this.ValidCell(name))
-        {
-            throw new InvalidNameException();
-        }
-
+        // Check that a cell does not become dependent on itself during the setting of it's contents
         foreach (string dependent in formula.GetVariables())
         {
-            Stack<string> dependentCells = new Stack<string>();
-            dependentCells.Push(dependent);
-
-            while (dependentCells.TryPop(out string innerdependent))
-            {
-                if (GetDirectDependents(innerdependent).Contains(name))
-                {
-                    throw new CircularException();
-                }
-
-                foreach (string currCell in GetDirectDependents(innerdependent))
-                {
-                    dependentCells.Push(currCell);
-                }
-            }
+            Visit(dependent, name, new HashSet<string>(), new LinkedList<string>());
         }
 
         // If a cell is empty, set that sell to contain the provided Formula, otherwise remove the cell and
@@ -434,7 +401,7 @@ public class Spreadsheet
     {
         // Add each cell that can be visited, recursively looking at each dependent of the current cell
         visited.Add(name); // Mark that the current node was visited
-        foreach (string dependent in this.GetDirectDependents(name))
+        foreach (string dependent in this.dependencies.GetDependees(name))
         {
             // Unless the cell is the starting cell, continue searching through each dependent node until none are left
             if (dependent.Equals(start))
@@ -597,7 +564,16 @@ public class Spreadsheet
     /// </exception>
     public void Save(string filename)
     {
-        
+        Spreadsheet sp = new Spreadsheet()
+        {
+            name = this.name,
+            cells = this.cells,
+            dependencies = this.dependencies,
+        };
+
+        FileStream tempFile = File.Create(filename);
+        JsonSerializer.SerializeAsync(tempFile, sp);
+        tempFile.Close();
     }
 
     /// <summary>
@@ -617,7 +593,13 @@ public class Spreadsheet
     /// <exception cref="SpreadsheetReadWriteException"> When the file cannot be opened or the json is bad.</exception>
     public void Load(string filename)
     {
-        throw new NotImplementedException();
+        if (!File.Exists(filename))
+        {
+            throw new SpreadsheetReadWriteException("Cannot find filename");
+        }
+
+        FileStream tempFile = File.OpenRead(filename);
+        JsonSerializer.Deserialize(tempFile, tempFile.GetType());
     }
 
     /// <summary>
@@ -712,7 +694,13 @@ public class Spreadsheet
     {
         IList<string> editedCells = new List<string>();
 
-        if(double.TryParse(content, out double cellVal))
+        // Check that the cell that is being set has a valid name
+        if (!this.ValidCell(name))
+        {
+            throw new InvalidNameException();
+        }
+
+        if (double.TryParse(content, out double cellVal))
         {
             editedCells = SetCellContents(name, cellVal);
         }

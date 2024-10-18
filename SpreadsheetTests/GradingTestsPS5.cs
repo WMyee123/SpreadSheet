@@ -568,7 +568,7 @@ public class SpreadsheetTest
             string currentCell = "A" + i;
             string nextCell    = "A" + ( i + 1 );
             s.SetContentsOfCell( nextCell, "0" );
-            s.SetContentsOfCell( currentCell, nextCell );
+            s.SetContentsOfCell( currentCell, $"={nextCell}" );
         }
 
         s.SetContentsOfCell( "A150", "=A50" );
@@ -635,7 +635,7 @@ public class SpreadsheetTest
             string currentCell = "A1" + i;
             string nextCell    = "A1" + ( i + 1 );
             s.SetContentsOfCell( nextCell, "0" );
-            s.SetContentsOfCell( currentCell, nextCell );
+            s.SetContentsOfCell( currentCell, $"={nextCell}" );
         }
 
         List<string> firstCells = [];
